@@ -113,7 +113,7 @@ export default function AlumniInspirationTextOnly() {
           <Link
             href="/alumni
             "
-            className="bg-violet-600 hover:bg-violet-700 text-white px-8 py-3 rounded-full font-semibold shadow-md hover:shadow-lg transform hover:-translate-y-1 transition-all duration-300 inline-block focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-violet-500"
+            className="bg-violet-600 hover:bg-violet-700 text-white px-8 py-3 rounded-full font-semibold shadow-md hover:shadow-lg transform hover:-translate-y-1 transition-all duration-300 inline-block focus-visible:outline focus-visible:outline-offset-2 focus-visible:outline-violet-500"
           >
             Lihat Semua Kisah Alumni
           </Link>

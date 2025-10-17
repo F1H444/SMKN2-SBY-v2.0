@@ -170,12 +170,6 @@ export default function NewsDetailPage() {
     setLikes(isLiked ? likes - 1 : likes + 1);
   };
 
-  const handleShare = (platform: string) => {
-    const url = window.location.href;
-    const text = newsDetail.title;
-    // ...logika share
-  };
-
   const handleSubmitComment = (e: React.FormEvent) => {
     e.preventDefault();
     if (!comment.trim()) return;

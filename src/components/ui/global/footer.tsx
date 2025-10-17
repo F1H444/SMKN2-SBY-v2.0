@@ -77,13 +77,14 @@ const Footer = () => {
       { rootMargin: "0px 0px -100px 0px" }
     );
 
-    if (footerRef.current) {
-      observer.observe(footerRef.current);
-    }
+    const footerElement = footerRef.current;
+    if (!footerElement) return;
+    
+    observer.observe(footerElement);
 
     return () => {
       // Cleanup observer saat komponen di-unmount
-      if (footerRef.current) observer.disconnect();
+      observer.disconnect();
     };
   }, []);
 

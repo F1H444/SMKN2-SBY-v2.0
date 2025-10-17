@@ -2,16 +2,13 @@
 import React, { useState, useEffect } from "react";
 import {
   Quote,
-  Globe,
-  Wifi,
-  BookOpen,
   Users,
   Award,
   GraduationCap,
   Mail,
-  Phone,
   MapPin,
 } from "lucide-react";
+import Image from "next/image";
 
 export default function PrincipalWelcome() {
   const [isVisible, setIsVisible] = useState(false);
@@ -139,7 +136,7 @@ export default function PrincipalWelcome() {
             <div className="relative group">
               {/* Photo - Standing Position */}
               <div className="relative w-64 sm:w-80 h-80 sm:h-96 flex items-end justify-center">
-                <img
+                <Image
                   src="/img/kepala-sekolah.webp"
                   alt="Plt. Kepala Sekolah"
                   className="w-full h-full object-cover object-top transition-transform duration-700 group-hover:scale-105 rounded-lg"
