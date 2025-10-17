@@ -10,6 +10,7 @@ import {
   ChevronLeft,
   ChevronRight,
 } from "lucide-react";
+import Image from "next/image";
 
 // Data Alumni
 const alumniData = [
@@ -184,7 +185,7 @@ const AlumniCard = ({ alumni, config }: { alumni: Alumni; config: any }) => {
       className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-lg hover:shadow-2xl hover:shadow-blue-500/10 dark:hover:shadow-blue-500/10 transition-shadow duration-300 p-6 flex flex-col"
     >
       <div className="flex items-center gap-4 mb-5">
-        <img
+        <Image
           src={alumni.image}
           alt={alumni.name}
           className="w-16 h-16 rounded-full bg-slate-200 border-2 border-white dark:border-slate-700 shadow-md"

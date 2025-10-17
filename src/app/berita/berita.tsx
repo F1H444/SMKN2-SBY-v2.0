@@ -1,6 +1,7 @@
 "use client";
 import { useState } from "react";
 import { Calendar, Clock, Tag, ChevronRight } from "lucide-react";
+import Image from "next/image";
 
 export default function NewsPage() {
   const [activeCategory, setActiveCategory] = useState("Terbaru");
@@ -277,7 +278,7 @@ export default function NewsPage() {
                 >
                   {/* Image Container */}
                   <div className="relative h-48 sm:h-56 overflow-hidden bg-gray-200">
-                    <img
+                    <Image
                       src={news.image}
                       alt={news.title}
                       className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"

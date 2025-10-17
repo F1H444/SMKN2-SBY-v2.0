@@ -168,7 +168,6 @@ export function Lamphome({
   logoAlt,
   navItems = NAV_ITEMS,
   children,
-  className = "",
 }: any): React.JSX.Element {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [isProfileOpen, setIsProfileOpen] = useState(false);

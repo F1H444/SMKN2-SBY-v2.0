@@ -1,6 +1,5 @@
 import React from "react";
 import PanoramaViewer from "../(360)/PanoramaViewer"; // Adjust path as needed
-import FacilityCard from "../(360)/FacilityCard"; // Adjust path as needed
 
 // Data is now defined in the parent page component
 const images = [
