@@ -142,12 +142,15 @@ interface Alumni {
   image: string;
 }
 
+type StatusKey = keyof typeof statusConfig;
+
 const AlumniCard = ({ alumni, config }: { alumni: Alumni; config: any }) => {
-  const cardRef = useRef(null);
+  const cardRef = useRef<HTMLDivElement>(null);
 
   const handleMouseMove = (e: { clientX: number; clientY: number; }) => {
-    const { left, top, width, height } =
-      cardRef.current.getBoundingClientRect();
+    if (!cardRef.current) return;
+
+    const { left, top, width, height } = cardRef.current.getBoundingClientRect();
     const x = (e.clientX - left) / width;
     const y = (e.clientY - top) / height;
     const rotateX = (y - 0.5) * -15;
@@ -218,7 +221,7 @@ const DirektoriAlumni = () => {
   const [filterStatus, setFilterStatus] = useState("Semua");
   const [currentPage, setCurrentPage] = useState(1);
   const mainRef = useRef(null);
-  const gridRef = useRef(null);
+  const gridRef = useRef<HTMLDivElement>(null);
 
   const filteredAlumni = useMemo(() => {
     return alumniData
@@ -269,18 +272,19 @@ const DirektoriAlumni = () => {
   }, []);
 
   useEffect(() => {
-    if (gridRef.current) {
-      const ctx = gsap.context(() => {
-        gsap.from(gridRef.current.children, {
-          y: 30,
-          opacity: 0,
-          duration: 0.5,
-          ease: "power3.out",
-          stagger: 0.08,
-        });
-      }, gridRef);
-      return () => ctx.revert();
-    }
+    if (!gridRef.current) return;
+
+    const ctx = gsap.context(() => {
+      gsap.from(gridRef.current!.children, {
+        y: 30,
+        opacity: 0,
+        duration: 0.5,
+        ease: "power3.out",
+        stagger: 0.08,
+      });
+    }, gridRef);
+
+    return () => ctx.revert();
   }, [paginatedAlumni]);
 
   return (
@@ -350,7 +354,8 @@ const DirektoriAlumni = () => {
             className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
           >
             {paginatedAlumni.map((alumni) => {
-              const config = statusConfig[alumni.status];
+              const key = alumni.status as StatusKey;
+              const config = statusConfig[key];
               return (
                 <AlumniCard key={alumni.id} alumni={alumni} config={config} />
               );

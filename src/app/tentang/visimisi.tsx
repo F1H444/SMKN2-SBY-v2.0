@@ -1,6 +1,6 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { motion, easeOut } from "framer-motion";
 import { Target, Users, Award, Zap, BookOpen, Globe } from "lucide-react";
 
 const misiList = [
@@ -36,7 +36,7 @@ const misiList = [
   },
 ];
 
-// Animation Variants
+// ✅ Animation Variants (fixed easing)
 const containerVariants = {
   hidden: { opacity: 0 },
   visible: {
@@ -54,14 +54,13 @@ const itemVariants = {
     y: 0,
     transition: {
       duration: 0.6,
-      ease: "easeOut",
+      ease: easeOut, // ✅ gunakan preset dari framer-motion
     },
   },
 };
 
 export default function VisiMisiSMKN2() {
   return (
-    // Latar belakang transparan, akan mengikuti layout utama
     <div className="w-full">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 md:py-24">
         {/* --- Header --- */}
@@ -89,7 +88,6 @@ export default function VisiMisiSMKN2() {
           viewport={{ once: true, amount: 0.5 }}
           variants={itemVariants}
         >
-          {/* UPDATE: Peningkatan tampilan Light Mode dengan bg-white dan shadow */}
           <div className="relative p-8 md:p-12 rounded-3xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/50 backdrop-blur-sm overflow-hidden shadow-lg">
             <div className="flex flex-col md:flex-row items-center gap-6 text-center md:text-left">
               <div className="flex-shrink-0">
@@ -122,7 +120,6 @@ export default function VisiMisiSMKN2() {
           </p>
         </div>
 
-        {/* UPDATE: Menggunakan flexbox untuk centering di layar besar */}
         <motion.div
           className="flex flex-wrap justify-center gap-8"
           initial="hidden"
@@ -133,7 +130,6 @@ export default function VisiMisiSMKN2() {
           {misiList.map((misi, index) => {
             const Icon = misi.icon;
             return (
-              // UPDATE: Basis item diatur agar rapi di semua ukuran layar
               <motion.div
                 key={index}
                 className="group p-6 rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/40 backdrop-blur-sm text-center transition-all duration-300 hover:!border-blue-500 shadow-md flex-grow basis-full sm:basis-[45%] lg:basis-[30%]"

@@ -11,15 +11,13 @@ import {
   Eye,
   MessageCircle,
   Heart,
-  Facebook,
-  Twitter,
-  Link as LinkIcon,
   User,
   Send,
   ThumbsUp,
   LogIn,
 } from "lucide-react";
 import { useAuth } from "@/app/context/AuthContext";
+import Image from "next/image";
 
 export default function NewsDetailPage() {
   const { isLoggedIn, isLoading } = useAuth();
@@ -228,7 +226,7 @@ export default function NewsDetailPage() {
           <article className="lg:col-span-2">
             <div className="backdrop-blur-lg rounded-3xl shadow-2xl overflow-hidden border bg-white/90 border-gray-200/50 dark:bg-gray-900/90 dark:border-gray-700/50">
               <div className="relative h-64 sm:h-96 overflow-hidden">
-                <img
+                <Image
                   src={newsDetail.image}
                   alt={newsDetail.title}
                   className="w-full h-full object-cover"
@@ -421,7 +419,7 @@ export default function NewsDetailPage() {
                     >
                       <div className="flex gap-3">
                         <div className="w-24 h-24 rounded-lg overflow-hidden flex-shrink-0">
-                          <img
+                          <Image
                             src={news.image}
                             alt={news.title}
                             className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"

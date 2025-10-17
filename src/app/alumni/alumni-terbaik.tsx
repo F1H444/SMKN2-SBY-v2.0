@@ -1,6 +1,7 @@
 "use client";
 import React, { useState, useMemo } from "react";
 import { Search, Briefcase, Award, Building2, Users } from "lucide-react";
+import Image from "next/image";
 
 const AlumniPage = () => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -121,7 +122,7 @@ const AlumniPage = () => {
         alumni.department === selectedDepartment;
       return matchesSearch && matchesDepartment;
     });
-  }, [searchTerm, selectedDepartment]);
+  }, [searchTerm, selectedDepartment, alumniData]);
 
   return (
     // --- PERBAIKAN UTAMA ---
@@ -199,7 +200,7 @@ const AlumniPage = () => {
               >
                 <div className="p-6 flex flex-col items-center text-center">
                   <div className="w-24 h-24 rounded-full bg-gradient-to-br from-blue-400 to-blue-600 p-1 ring-4 ring-border overflow-hidden mb-4">
-                    <img
+                    <Image
                       src={alumni.image}
                       alt={alumni.name}
                       className="w-full h-full object-cover rounded-full bg-background"

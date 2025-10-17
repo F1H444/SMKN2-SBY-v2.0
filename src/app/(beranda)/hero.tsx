@@ -102,7 +102,7 @@ export default function HeroSection() {
             {/* Tombol ini sekarang akan melakukan smooth scroll ke elemen dengan id="programs" */}
             <Link
               href="#state"
-              className="group inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-purple-600 to-blue-600 px-6 py-3 font-semibold text-white shadow-md transition-transform duration-200 hover:-translate-y-1 hover:shadow-lg focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-purple-600 will-change-transform"
+              className="group inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-purple-600 to-blue-600 px-6 py-3 font-semibold text-white shadow-md transition-transform duration-200 hover:-translate-y-1 hover:shadow-lg focus-visible:outline focus-visible:outline-offset-2 focus-visible:outline-purple-600 will-change-transform"
             >
               <span>Jelajahi Sekolah Kami</span>
               <ArrowIcon className="h-5 w-5 transition-transform duration-200 group-hover:translate-x-1" />
