@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
 import {
   Image,
@@ -130,8 +130,14 @@ const eskulData = [
 
 export default function EskulPage() {
   const main = useRef<HTMLDivElement>(null);
+  const [dataEkskul, setDataEkskul] = useState([]);
 
   useEffect(() => {
+    fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/majors`)
+      .then((res) => res.json())
+      .then((result) => setDataEkskul(result.items))
+      .catch(console.error);
+
     const ctx = gsap.context(() => {
       // Animasi scroll trigger untuk cards
       gsap.fromTo(
@@ -208,6 +214,10 @@ export default function EskulPage() {
 
     return () => ctx.revert();
   }, []);
+
+  if (dataEkskul) {
+    console.log(dataEkskul)
+  } else console.log("eskul data still kosong")
 
   return (
     <div
