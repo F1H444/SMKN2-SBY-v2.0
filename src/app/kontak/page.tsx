@@ -47,7 +47,6 @@ const ContactPage = () => {
           EMAILJS_PUBLIC_KEY
         )
         .then(
-          // FIX: Menghapus parameter 'result' yang tidak digunakan
           () => {
             setStatus({
               type: "success",
@@ -55,7 +54,6 @@ const ContactPage = () => {
             });
             form.current?.reset();
           },
-          // FIX: Menghapus parameter 'error' yang tidak digunakan
           () => {
             setStatus({
               type: "error",
@@ -124,8 +122,6 @@ const ContactPage = () => {
     },
   };
 
-  // FIX: Menghapus 'itemVariants' karena tidak digunakan
-
   return (
     <div className="min-h-screen w-full flex items-start lg:items-center justify-center p-4 sm:p-6 lg:p-8 pt-32 lg:pt-8 relative overflow-hidden bg-slate-50 dark:bg-slate-900">
       {/* Background Video (Hanya untuk Dark Mode) */}
@@ -157,7 +153,6 @@ const ContactPage = () => {
         {/* Left Column: Contact Info */}
         <motion.div
           className="p-8 sm:p-12 flex flex-col justify-between bg-black/5 dark:bg-black/20"
-          variants={columnVariants}
         >
           <div>
             <motion.h1
@@ -235,7 +230,6 @@ const ContactPage = () => {
         {/* Right Column: Contact Form */}
         <motion.div
           className="p-8 sm:p-12 bg-white/50 dark:bg-slate-900/60"
-          variants={columnVariants}
         >
           <form
             ref={form}
