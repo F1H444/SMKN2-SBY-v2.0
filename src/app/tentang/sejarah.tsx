@@ -1,7 +1,7 @@
 "use client";
 
 import { motion, useScroll, useSpring } from "framer-motion";
-import { useRef } from "react";
+import React, { useRef } from "react"; // FIX: Import React for types
 import {
   GraduationCap,
   Shield,
@@ -62,7 +62,8 @@ interface Milestone {
   year: string;
   title: string;
   desc: string;
-  icon: any;
+  // FIX: Mengganti 'any' dengan tipe yang lebih spesifik untuk komponen React
+  icon: React.ComponentType<{ className: string }>;
 }
 
 const MilestoneCard = ({

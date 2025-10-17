@@ -1,3 +1,5 @@
+// src/app/alumni/bmw.tsx
+
 "use client";
 import React, { useState, useMemo, useRef, useEffect } from "react";
 import { motion } from "framer-motion";
@@ -12,7 +14,6 @@ import {
 } from "lucide-react";
 import Image from "next/image";
 
-// Data Alumni
 const alumniData = [
   {
     id: 1,
@@ -143,20 +144,33 @@ interface Alumni {
   image: string;
 }
 
+// ✅ Interface untuk prop 'config'
+interface StatusConfig {
+  icon: React.ElementType;
+  color: string;
+  label: string;
+}
+
 type StatusKey = keyof typeof statusConfig;
 
-const AlumniCard = ({ alumni, config }: { alumni: Alumni; config: any }) => {
+// ✅ Tipe 'any' diganti dengan 'StatusConfig'
+const AlumniCard = ({
+  alumni,
+  config,
+}: {
+  alumni: Alumni;
+  config: StatusConfig;
+}) => {
   const cardRef = useRef<HTMLDivElement>(null);
 
-  const handleMouseMove = (e: { clientX: number; clientY: number; }) => {
+  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
     if (!cardRef.current) return;
-
-    const { left, top, width, height } = cardRef.current.getBoundingClientRect();
+    const { left, top, width, height } =
+      cardRef.current.getBoundingClientRect();
     const x = (e.clientX - left) / width;
     const y = (e.clientY - top) / height;
     const rotateX = (y - 0.5) * -15;
     const rotateY = (x - 0.5) * 15;
-
     gsap.to(cardRef.current, {
       rotationX: rotateX,
       rotationY: rotateY,
@@ -188,6 +202,8 @@ const AlumniCard = ({ alumni, config }: { alumni: Alumni; config: any }) => {
         <Image
           src={alumni.image}
           alt={alumni.name}
+          width={64}
+          height={64}
           className="w-16 h-16 rounded-full bg-slate-200 border-2 border-white dark:border-slate-700 shadow-md"
         />
         <div className="flex-1">
@@ -247,7 +263,7 @@ const DirektoriAlumni = () => {
     [filteredAlumni, currentPage]
   );
 
-  const handleFilterChange = (status: React.SetStateAction<string>) => {
+  const handleFilterChange = (status: string) => {
     setFilterStatus(status);
     setCurrentPage(1);
   };
@@ -274,7 +290,6 @@ const DirektoriAlumni = () => {
 
   useEffect(() => {
     if (!gridRef.current) return;
-
     const ctx = gsap.context(() => {
       gsap.from(gridRef.current!.children, {
         y: 30,
@@ -284,7 +299,6 @@ const DirektoriAlumni = () => {
         stagger: 0.08,
       });
     }, gridRef);
-
     return () => ctx.revert();
   }, [paginatedAlumni]);
 
@@ -313,7 +327,6 @@ const DirektoriAlumni = () => {
                 className="w-full pl-12 pr-4 py-3 bg-slate-100 dark:bg-slate-800/50 border-2 border-transparent focus:border-blue-500 focus:bg-white dark:focus:bg-slate-900 rounded-xl focus:ring-0 outline-none transition"
               />
             </div>
-            {/* --- PERBAIKAN FILTER DISINI --- */}
             <div className="flex items-center gap-2 bg-slate-100 dark:bg-slate-900 p-1.5 rounded-xl">
               {["Semua", "Bekerja", "Melanjutkan", "Wirausaha"].map(
                 (status) => (

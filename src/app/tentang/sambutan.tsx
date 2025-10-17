@@ -1,13 +1,6 @@
 "use client";
 import React, { useState, useEffect } from "react";
-import {
-  Quote,
-  Users,
-  Award,
-  GraduationCap,
-  Mail,
-  MapPin,
-} from "lucide-react";
+import { Quote, Users, Award, GraduationCap, Mail, MapPin } from "lucide-react";
 import Image from "next/image";
 
 export default function PrincipalWelcome() {
@@ -64,7 +57,7 @@ export default function PrincipalWelcome() {
             <div className="space-y-3 sm:space-y-4 text-gray-700 dark:text-slate-300 leading-relaxed max-h-[400px] sm:max-h-[500px] overflow-y-auto pr-2 sm:pr-4 scrollbar-thin scrollbar-thumb-blue-500/50 scrollbar-track-transparent">
               <p className="backdrop-blur-sm bg-blue-50/50 dark:bg-white/5 p-3 sm:p-4 rounded-lg border border-blue-100 dark:border-white/10 text-sm sm:text-base">
                 <strong className="text-blue-700 dark:text-blue-300">
-                  Assalamu'alaikum Wr.Wb.
+                  Assalamu&apos;alaikum Wr.Wb.
                 </strong>
               </p>
 
@@ -139,8 +132,10 @@ export default function PrincipalWelcome() {
                 <Image
                   src="/img/kepala-sekolah.webp"
                   alt="Plt. Kepala Sekolah"
+                  width={320}
+                  height={384}
                   className="w-full h-full object-cover object-top transition-transform duration-700 group-hover:scale-105 rounded-lg"
-                  loading="eager"
+                  priority
                 />
               </div>
 

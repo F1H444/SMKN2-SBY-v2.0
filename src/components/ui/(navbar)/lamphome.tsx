@@ -88,7 +88,13 @@ const Logo = memo(
 );
 Logo.displayName = "Logo";
 
-const ChainPull = memo(({ isDark, onDragEnd }: any) => (
+// FIX: Memberikan tipe spesifik untuk props
+interface ChainPullProps {
+  isDark: boolean;
+  onDragEnd: (event: MouseEvent | TouchEvent | PointerEvent, info: PanInfo) => void;
+}
+
+const ChainPull = memo(({ isDark, onDragEnd }: ChainPullProps) => (
   <div className="absolute right-6 top-full mt-2 flex flex-col items-center group z-10">
     <motion.div
       className="w-1 bg-gradient-to-b from-gray-400 to-gray-600 dark:from-gray-500 dark:to-gray-300 rounded-full shadow-sm"
@@ -162,19 +168,29 @@ const ChainPull = memo(({ isDark, onDragEnd }: any) => (
 ));
 ChainPull.displayName = "ChainPull";
 
+// FIX: Menambahkan interface untuk props komponen
+interface LamphomeProps {
+  logoSrc: string;
+  logoSrcDark: string;
+  logoAlt: string;
+  navItems?: NavItem[];
+  children: React.ReactNode;
+}
+
 export function Lamphome({
   logoSrc,
   logoSrcDark,
   logoAlt,
   navItems = NAV_ITEMS,
   children,
-}: any): React.JSX.Element {
+}: LamphomeProps): React.JSX.Element {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const [isMounted, setIsMounted] = useState(false);
 
   const profileRef = useRef<HTMLDivElement>(null);
-  const { theme, setTheme, resolvedTheme } = useTheme();
+  // FIX: Menghapus 'theme' yang tidak digunakan
+  const { setTheme, resolvedTheme } = useTheme();
   const { isLoggedIn, isLoading, logout } = useAuth();
 
   const isDarkMode = resolvedTheme === "dark";
@@ -197,7 +213,7 @@ export function Lamphome({
   }, []);
 
   const handleDragEnd = useCallback(
-    (event: any, info: PanInfo) => {
+    (event: MouseEvent | TouchEvent | PointerEvent, info: PanInfo) => {
       if (info.offset.y > 8) {
         setTheme(resolvedTheme === "dark" ? "light" : "dark");
       }

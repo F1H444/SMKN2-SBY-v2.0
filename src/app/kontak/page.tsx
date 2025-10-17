@@ -47,14 +47,16 @@ const ContactPage = () => {
           EMAILJS_PUBLIC_KEY
         )
         .then(
-          (result) => {
+          // FIX: Menghapus parameter 'result' yang tidak digunakan
+          () => {
             setStatus({
               type: "success",
               message: "Pesan Anda berhasil terkirim. Terima kasih!",
             });
             form.current?.reset();
           },
-          (error) => {
+          // FIX: Menghapus parameter 'error' yang tidak digunakan
+          () => {
             setStatus({
               type: "error",
               message: "Gagal mengirim pesan. Silakan coba lagi nanti.",
@@ -122,15 +124,7 @@ const ContactPage = () => {
     },
   };
 
-  // Variants untuk item di dalam kolom
-  const itemVariants = {
-    hidden: { opacity: 0, x: -20 },
-    visible: {
-      opacity: 1,
-      x: 0,
-      transition: { duration: 0.5 },
-    },
-  };
+  // FIX: Menghapus 'itemVariants' karena tidak digunakan
 
   return (
     <div className="min-h-screen w-full flex items-start lg:items-center justify-center p-4 sm:p-6 lg:p-8 pt-32 lg:pt-8 relative overflow-hidden bg-slate-50 dark:bg-slate-900">

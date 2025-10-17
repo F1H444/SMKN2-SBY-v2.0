@@ -1,5 +1,6 @@
 "use client";
 import React, { useState, useRef, useEffect, useCallback } from "react";
+import Image from "next/image"; // FIX: Import next/image
 
 // Define the shape of an image object for type safety
 interface PanoramaImage {
@@ -35,24 +36,48 @@ function PanoramaViewer({ images }: PanoramaViewerProps) {
     return () => clearTimeout(timer);
   }, []);
 
-  // Effect to update image width when the image or container changes
+  // FIX: Logic adjusted to calculate image width based on container height and aspect ratio
   useEffect(() => {
-    const updateImageWidth = () => {
+    let isMounted = true;
+
+    const updateImageDimensions = (
+      naturalWidth: number,
+      naturalHeight: number
+    ) => {
+      if (!isMounted || !containerRef.current) return;
+
+      const containerHeight = containerRef.current.offsetHeight;
+      const aspectRatio = naturalWidth / naturalHeight;
+      const calculatedWidth = containerHeight * aspectRatio;
+
+      imageWidthRef.current = calculatedWidth;
+
+      // Apply width to wrapper divs
       if (imageContainerRef.current) {
-        const firstImage = imageContainerRef.current
-          .firstChild as HTMLImageElement;
-        if (firstImage) {
-          imageWidthRef.current = firstImage.offsetWidth;
+        const children = imageContainerRef.current.children;
+        for (let i = 0; i < children.length; i++) {
+          (children[i] as HTMLElement).style.width = `${calculatedWidth}px`;
         }
       }
     };
 
-    const img = new Image();
+    const img = new window.Image();
     img.src = currentImage.url;
-    img.onload = updateImageWidth;
+    img.onload = () => {
+      updateImageDimensions(img.naturalWidth, img.naturalHeight);
+    };
 
-    window.addEventListener("resize", updateImageWidth);
-    return () => window.removeEventListener("resize", updateImageWidth);
+    const handleResize = () => {
+      if (img.complete) {
+        updateImageDimensions(img.naturalWidth, img.naturalHeight);
+      }
+    };
+
+    window.addEventListener("resize", handleResize);
+    return () => {
+      isMounted = false;
+      window.removeEventListener("resize", handleResize);
+    };
   }, [currentImage.url]);
 
   // Main animation loop using requestAnimationFrame
@@ -189,15 +214,19 @@ function PanoramaViewer({ images }: PanoramaViewerProps) {
             className="absolute top-0 left-0 h-full flex"
             style={{ willChange: "transform" }}
           >
-            {/* Render two images to fill the space during wrap-around */}
+            {/* FIX: Replaced <img> with next/Image inside a sized container */}
             {[0, 1].map((i) => (
-              <img
-                key={i}
-                src={currentImage.url}
-                alt="Panorama 360"
-                className="h-full max-w-none pointer-events-none"
-                draggable={false}
-              />
+              <div key={i} className="relative h-full flex-shrink-0">
+                <Image
+                  src={currentImage.url}
+                  alt="Panorama 360"
+                  fill
+                  priority={i === 0}
+                  draggable={false}
+                  className="pointer-events-none"
+                  style={{ objectFit: "cover" }}
+                />
+              </div>
             ))}
           </div>
 

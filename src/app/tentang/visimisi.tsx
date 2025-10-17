@@ -100,10 +100,11 @@ export default function VisiMisiSMKN2() {
                   Visi Sekolah
                 </h2>
                 <blockquote className="text-xl text-slate-700 dark:text-slate-300 italic leading-relaxed">
-                  "Terwujudnya SMK Negeri 2 Surabaya sebagai lembaga pendidikan
-                  kejuruan yang unggul, berkarakter, berwawasan lingkungan, dan
-                  mampu menghasilkan lulusan yang profesional serta siap
-                  bersaing di era global."
+                  {/* FIX: Mengganti " dengan &quot; */}
+                  &quot;Terwujudnya SMK Negeri 2 Surabaya sebagai lembaga
+                  pendidikan kejuruan yang unggul, berkarakter, berwawasan
+                  lingkungan, dan mampu menghasilkan lulusan yang profesional
+                  serta siap bersaing di era global.&quot;
                 </blockquote>
               </div>
             </div>
