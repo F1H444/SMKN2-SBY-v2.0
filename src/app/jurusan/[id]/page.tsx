@@ -1,9 +1,8 @@
 "use client";
 
-import { useParams, useRouter } from "next/navigation";
+import { useParams } from "next/navigation";
 import { motion } from "framer-motion";
 import {
-  Image as ImageIcon,
   Code,
   Cpu,
   Wrench,
@@ -18,37 +17,37 @@ import {
   CheckCircle2,
   Briefcase,
   GraduationCap,
+  Image as ImageIcon,
 } from "lucide-react";
 import Link from "next/link";
+import Image from "next/image";
+import React, { useState, memo } from "react";
 
-// Data lengkap semua jurusan
+// Data lengkap dan diperbarui dengan path gambar dan konten yang sesuai.
 const jurusanData = {
   rpl: {
     id: "rpl",
     short: "RPL",
     title: "Rekayasa Perangkat Lunak",
     description:
-      "Mempelajari pengembangan, pemeliharaan, dan manajemen kualitas perangkat lunak secara sistematis.",
+      "Mendalami cara pengembangan perangkat lunak secara sistematis dan profesional.",
     icon: Code,
     color: "from-blue-500 to-cyan-500",
+    image: "/img/detailjurusan/rpl.webp",
     detailDescription:
-      "Program keahlian Rekayasa Perangkat Lunak mempersiapkan siswa untuk menjadi developer profesional yang mampu merancang, mengembangkan, dan memelihara aplikasi berbasis web, mobile, dan desktop.",
+      "Program keahlian RPL mendidik siswa untuk menjadi pengembang perangkat lunak yang kompeten, mampu merancang, membangun, dan mengelola aplikasi web, mobile, dan desktop menggunakan teknologi terkini.",
     kompetensi: [
-      "Pemrograman Web (HTML, CSS, JavaScript, PHP)",
-      "Pengembangan Aplikasi Mobile (Android/iOS)",
-      "Database Management (MySQL, PostgreSQL)",
-      "UI/UX Design dan Prototyping",
-      "Version Control dengan Git & GitHub",
-      "Framework Modern (React, Laravel, Flutter)",
+      "Pemrograman web",
+      "Pemrograman perangkat bergerak",
+      "Pemrograman berbasis objek",
     ],
     prospekKerja: [
-      "Full Stack Developer",
-      "Mobile App Developer",
-      "Front-end Developer",
-      "Back-end Developer",
-      "Software Engineer",
-      "UI/UX Designer",
-      "Quality Assurance Engineer",
+      "Software engineer/programmer",
+      "Mobile computing",
+      "IT Consultant",
+      "System analyst",
+      "Game developer",
+      "Software tester",
     ],
   },
   tkj: {
@@ -56,80 +55,48 @@ const jurusanData = {
     short: "TKJ",
     title: "Teknik Komputer dan Jaringan",
     description:
-      "Fokus pada perancangan, instalasi, dan konfigurasi infrastruktur jaringan komputer dan server.",
+      "Mempelajari cara merakit komputer dan menginstal program komputer.",
     icon: Cpu,
     color: "from-green-500 to-emerald-500",
+    image: "/img/detailjurusan/tkj.webp",
     detailDescription:
-      "Program keahlian Teknik Komputer dan Jaringan mempersiapkan siswa menjadi teknisi jaringan profesional yang mampu merancang, menginstal, mengkonfigurasi dan memelihara infrastruktur jaringan komputer.",
+      "Siswa TKJ dipersiapkan untuk menjadi ahli di bidang infrastruktur teknologi informasi, mulai dari perakitan, instalasi, hingga administrasi jaringan dan server yang kompleks.",
     kompetensi: [
-      "Instalasi dan Konfigurasi Jaringan LAN/WAN",
-      "Routing dan Switching (Cisco, MikroTik)",
-      "Network Security dan Firewall",
-      "Server Administration (Windows/Linux)",
-      "Wireless Network Configuration",
-      "Troubleshooting Jaringan",
+      "Administrasi infrastruktur Jaringan",
+      "Praktikum Routing Dinamis dengan protokol OSPF",
+      "Konfigurasi Routing dinamis dengan Protokol RIP",
     ],
     prospekKerja: [
+      "Teknisi",
+      "Marketer / Sales",
+      "PNS",
+      "Desainer",
+      "Programmer",
+      "System Analyst",
       "Network Administrator",
-      "Network Engineer",
-      "System Administrator",
-      "IT Support Specialist",
-      "Network Security Analyst",
-      "Data Center Technician",
+      "Game Developer",
     ],
   },
   tpm: {
     id: "tpm",
     short: "TPM",
     title: "Teknik Pemesinan",
-    description:
-      "Mengasah keterampilan dalam proses produksi manufaktur menggunakan mesin perkakas presisi.",
+    description: "Mempersiapkan tenaga kerja terampil di bidang pemesinan.",
     icon: Wrench,
     color: "from-slate-500 to-gray-600",
+    image: "/img/detailjurusan/tpm.webp",
     detailDescription:
-      "Program keahlian Teknik Pemesinan mempersiapkan siswa menjadi operator dan teknisi mesin produksi yang terampil dalam mengoperasikan mesin perkakas konvensional dan CNC.",
+      "Jurusan ini fokus pada pembentukan tenaga ahli yang mahir dalam mengoperasikan mesin produksi presisi, baik manual maupun berbasis komputer (CNC), untuk menciptakan komponen industri.",
     kompetensi: [
-      "Pengoperasian Mesin Bubut dan Frais",
-      "Pemrograman CNC (Computer Numerical Control)",
-      "Teknik Pengukuran Presisi",
-      "Membaca Gambar Teknik",
-      "Pemilihan Material dan Tool",
-      "Quality Control Produksi",
+      "Mengoperasikan mesin produksi manual maupun CNC (Computer Numerical Control)",
     ],
     prospekKerja: [
-      "Operator Mesin CNC",
-      "Machinist",
-      "Quality Control Inspector",
-      "Production Supervisor",
-      "Tool & Die Maker",
-      "Manufacturing Engineer",
-    ],
-  },
-  tsm: {
-    id: "tsm",
-    short: "TSM",
-    title: "Teknik Sepeda Motor",
-    description:
-      "Spesialisasi dalam perawatan, perbaikan, dan modifikasi teknologi sepeda motor modern.",
-    icon: Bike,
-    color: "from-orange-500 to-amber-500",
-    detailDescription:
-      "Program keahlian Teknik Sepeda Motor mempersiapkan siswa menjadi mekanik profesional yang ahli dalam perawatan, perbaikan, dan modifikasi sepeda motor modern.",
-    kompetensi: [
-      "Sistem Kelistrikan Sepeda Motor",
-      "Engine Overhaul dan Tune-Up",
-      "Sistem Injeksi Bahan Bakar (EFI)",
-      "Diagnosa Kerusakan dengan Scanner",
-      "Perawatan Berkala dan Service",
-      "Modifikasi dan Custom Motor",
-    ],
-    prospekKerja: [
-      "Mekanik Sepeda Motor",
-      "Service Advisor",
-      "Workshop Supervisor",
-      "Technical Support Engineer",
-      "Wirausaha Bengkel Motor",
-      "Spare Parts Specialist",
+      "Bekerja di Industri Otomotif",
+      "Bekerja bagian Konveksi energi",
+      "Bekerja pada industri Bioteknologi",
+      "Bergabung dengan PJB (Pembangkit Jawa Bali)",
+      "Bekerja pada Industri pertambangan",
+      "Drafter",
     ],
   },
   tkr: {
@@ -137,161 +104,51 @@ const jurusanData = {
     short: "TKR",
     title: "Teknik Kendaraan Ringan",
     description:
-      "Mempersiapkan tenaga ahli di bidang perawatan dan perbaikan mobil modern.",
+      "Menekankan keahlian pada penguasaan jasa perbaikan kendaraan ringan.",
     icon: Car,
     color: "from-red-500 to-rose-500",
+    image: "/img/detailjurusan/tkr.webp",
     detailDescription:
-      "Program keahlian Teknik Kendaraan Ringan mempersiapkan siswa menjadi teknisi otomotif yang kompeten dalam perawatan dan perbaikan kendaraan roda empat modern.",
+      "Program ini dirancang untuk menghasilkan mekanik dan teknisi handal yang mampu melakukan diagnosa, perawatan, dan perbaikan pada sistem-sistem kompleks kendaraan roda empat modern.",
     kompetensi: [
-      "Sistem Kelistrikan dan Elektronika Mobil",
-      "Engine Management System",
-      "Sistem AC dan Kelistrikan Body",
-      "Diagnosa dengan Scan Tool",
-      "Overhaul Mesin dan Transmisi",
-      "Sistem Rem dan Suspensi",
+      "Memahami dasar - dasar mesin",
+      "Sampai memperbaiki, menerapkan, memelihara komponen sistem kerja mesin",
     ],
     prospekKerja: [
-      "Teknisi Otomotif",
-      "Service Advisor",
-      "Auto Electrician",
-      "Workshop Manager",
-      "Technical Support",
-      "Wirausaha Bengkel Mobil",
-    ],
-  },
-  dpib: {
-    id: "dpib",
-    short: "DPIB",
-    title: "Desain Pemodelan & Info Bangunan",
-    description:
-      "Mempelajari perancangan bangunan, pemodelan 3D, dan manajemen informasi konstruksi (BIM).",
-    icon: Building,
-    color: "from-yellow-500 to-lime-500",
-    detailDescription:
-      "Program keahlian DPIB mempersiapkan siswa menjadi drafter dan desainer bangunan yang mampu membuat gambar teknik dan model 3D menggunakan teknologi BIM (Building Information Modeling).",
-    kompetensi: [
-      "AutoCAD 2D dan 3D",
-      "Building Information Modeling (BIM)",
-      "SketchUp dan 3D Rendering",
-      "Menggambar Konstruksi Bangunan",
-      "RAB (Rencana Anggaran Biaya)",
-      "Spesifikasi Teknis Bangunan",
-    ],
-    prospekKerja: [
-      "Drafter Arsitektur",
-      "BIM Modeler",
-      "Surveyor",
-      "Quantity Surveyor",
-      "CAD Operator",
-      "Estimator Biaya",
+      "Industri Otomotif",
+      "Mekanik",
+      "Operator alat berat",
+      "Wirausaha",
+      "Sektor swasta dll",
     ],
   },
   tkp: {
     id: "tkp",
     short: "TKP",
     title: "Teknik Konstruksi & Perumahan",
-    description:
-      "Fokus pada pelaksanaan, pengawasan, dan manajemen proyek konstruksi gedung dan perumahan.",
+    description: "Mempelajari ilmu tentang konstruksi bangunan dan furniture.",
     icon: Home,
     color: "from-stone-500 to-neutral-500",
+    image: "/img/detailjurusan/tkp.webp",
     detailDescription:
-      "Program keahlian Teknik Konstruksi dan Perumahan mempersiapkan siswa menjadi teknisi konstruksi yang kompeten dalam pelaksanaan dan pengawasan proyek pembangunan.",
+      "Siswa dididik untuk menguasai berbagai aspek dalam dunia konstruksi, mulai dari perencanaan, pengukuran, pelaksanaan, hingga pengawasan proyek bangunan dan properti.",
     kompetensi: [
-      "Pekerjaan Beton dan Bekisting",
-      "Pekerjaan Struktur Bangunan",
-      "Ilmu Ukur Tanah (Surveying)",
-      "Manajemen Proyek Konstruksi",
-      "K3 (Keselamatan dan Kesehatan Kerja)",
-      "Quality Control Konstruksi",
+      "Gambar manual dan mekanika teknik",
+      "Teknik pengukuran tanah dan dasar-dasar konstruksi bangunan",
+      "Perencanaan, pelaksanaan serta pengawasan",
+      "Bisnis Konstruksi dan Properti",
+      "Estimasi biaya, pengelolaan konstruksi & properti",
+      "Produk kreatif & kewirausahaan",
     ],
     prospekKerja: [
-      "Site Engineer",
-      "Surveyor Lapangan",
-      "Supervisor Konstruksi",
-      "Quality Control Inspector",
-      "Estimator Proyek",
-      "Mandor Bangunan",
-    ],
-  },
-  animasi: {
-    id: "animasi",
-    short: "ANI",
-    title: "Animasi",
-    description:
-      "Mengembangkan kreativitas dalam pembuatan animasi 2D, 3D, dan efek visual untuk berbagai media.",
-    icon: ImageIcon,
-    color: "from-purple-500 to-violet-500",
-    detailDescription:
-      "Program keahlian Animasi mempersiapkan siswa menjadi animator profesional yang mampu menciptakan karya animasi 2D, 3D, dan efek visual untuk film, game, dan media digital.",
-    kompetensi: [
-      "Animasi 2D (Adobe Animate, Toon Boom)",
-      "Animasi 3D (Blender, Maya)",
-      "Video Editing (Premiere Pro, After Effects)",
-      "Character Design dan Rigging",
-      "Storyboarding dan Concept Art",
-      "Motion Graphics",
-    ],
-    prospekKerja: [
-      "Animator 2D/3D",
-      "Motion Graphics Designer",
-      "Video Editor",
-      "Character Designer",
-      "Visual Effects Artist",
-      "Game Animator",
-    ],
-  },
-  elektro: {
-    id: "elektro",
-    short: "TEI",
-    title: "Teknik Elektronika Industri",
-    description:
-      "Mempelajari perancangan, perakitan, dan pemeliharaan sistem kontrol elektronik di industri.",
-    icon: CircuitBoard,
-    color: "from-teal-500 to-cyan-500",
-    detailDescription:
-      "Program keahlian Teknik Elektronika Industri mempersiapkan siswa menjadi teknisi elektronika yang ahli dalam sistem kontrol otomatis dan instrumentasi industri.",
-    kompetensi: [
-      "PLC (Programmable Logic Controller)",
-      "Sistem Kontrol dan Otomasi Industri",
-      "Elektronika Digital dan Analog",
-      "Pneumatik dan Hidrolik",
-      "Sensor dan Instrumentasi",
-      "Robotika Industri",
-    ],
-    prospekKerja: [
-      "Teknisi Elektronika Industri",
-      "PLC Programmer",
-      "Maintenance Engineer",
-      "Automation Technician",
-      "Instrument Technician",
-      "Control System Engineer",
-    ],
-  },
-  tav: {
-    id: "tav",
-    short: "TAV",
-    title: "Teknik Audio Video",
-    description:
-      "Fokus pada perbaikan, instalasi, dan perawatan perangkat elektronik audio dan video.",
-    icon: Video,
-    color: "from-fuchsia-500 to-pink-500",
-    detailDescription:
-      "Program keahlian Teknik Audio Video mempersiapkan siswa menjadi teknisi profesional dalam bidang perawatan dan perbaikan perangkat audio visual modern.",
-    kompetensi: [
-      "Service Elektronika Consumer",
-      "Instalasi Sound System",
-      "Perbaikan TV dan Monitor",
-      "CCTV Installation",
-      "Home Theater Setup",
-      "Audio Mixing dan Recording",
-    ],
-    prospekKerja: [
-      "Teknisi Audio Video",
-      "CCTV Installer",
-      "Sound Engineer",
-      "Broadcasting Technician",
-      "Home Theater Specialist",
-      "Wirausaha Service Elektronik",
+      "Drafter",
+      "Quantity Surveyor",
+      "Quality Control",
+      "Pelaksana lapangan",
+      "Logistik",
+      "Konstruksi perencana",
+      "Pengendali proyek",
+      "Kontraktor/Pemborong",
     ],
   },
   titl: {
@@ -299,35 +156,169 @@ const jurusanData = {
     short: "TITL",
     title: "Teknik Instalasi Tenaga Listrik",
     description:
-      "Berfokus pada instalasi, pemeliharaan, dan perbaikan sistem tenaga listrik di gedung dan industri.",
+      "Mendidik keahlian dalam perencanaan dan pemasangan instalasi penerangan.",
     icon: Zap,
     color: "from-sky-500 to-indigo-500",
+    image: "/img/detailjurusan/titl.webp",
     detailDescription:
-      "Program keahlian Teknik Instalasi Tenaga Listrik mempersiapkan siswa menjadi teknisi listrik yang kompeten dalam instalasi dan pemeliharaan sistem kelistrikan.",
+      "Program ini mempersiapkan teknisi ahli di bidang ketenagalistrikan, mulai dari instalasi skala rumah tangga hingga sistem yang lebih kompleks seperti panel surya dan PLC.",
     kompetensi: [
-      "Instalasi Listrik Rumah dan Gedung",
-      "Instalasi Motor Listrik 3 Fasa",
-      "Pemasangan Panel Listrik",
-      "Sistem Pembangkit Listrik",
-      "Solar Panel Installation",
-      "Grounding dan Proteksi Listrik",
+      "Praktik Instalasi penerangan listrik",
+      "Merakit panel Surya",
+      "PLC (Programable logic Controller)",
+      "Merawat dan memperbaiki alat rumah dll",
     ],
     prospekKerja: [
-      "Teknisi Listrik",
-      "Electrical Installer",
-      "Maintenance Electrical",
-      "Solar Panel Technician",
-      "Building Electrician",
-      "Wirausaha Instalasi Listrik",
+      "Bekerja di bidang pembangkitan, transmisi, distribusi, dan juga pemanfaatan tenaga listrik sebagai peneliti, perancang, insinyur operasi, dan juga pemeliharaan sistem dan peralatan tenaga listrik di instansi pemerintahan dan berbagai industri ketenagalistrikan.",
+    ],
+  },
+  tav: {
+    id: "tav",
+    short: "TAV",
+    title: "Teknik Audio Video",
+    description:
+      "Jurusan dalam bidang elektronika, khususnya pengolahan sistem audio dan video.",
+    icon: Video,
+    color: "from-fuchsia-500 to-pink-500",
+    image: "/img/detailjurusan/tav.webp",
+    detailDescription:
+      "Siswa dibekali keterampilan untuk menjadi teknisi ahli dalam instalasi, perbaikan, dan pemeliharaan berbagai perangkat audio dan video, serta menerapkan standar keselamatan kerja (K3).",
+    kompetensi: [
+      "Menerapkan dasar-dasar Kelistrikan, Elektronika dan Teknik Digital",
+      "Menerapkan keselamatan, kesehatan kerja (K3)",
+    ],
+    prospekKerja: [
+      "Teknisi instalasi audio Vidio",
+      "Sound Enginner",
+      "Wirausaha",
+      "Sektor swasta",
+    ],
+  },
+  tei: {
+    // ID SUDAH KONSISTEN
+    id: "tei",
+    short: "TEI",
+    title: "Teknik Elektronika Industri",
+    description:
+      "Mendidik siswa agar mempunyai kemampuan di bidang sistem kontrol dan maintenance.",
+    icon: CircuitBoard,
+    color: "from-teal-500 to-cyan-500",
+    image: "/img/detailjurusan/tei.webp",
+    detailDescription:
+      "Fokus jurusan ini adalah pada sistem kontrol dan pemeliharaan peralatan industri berbasis 'electrical control' dan 'micro processor' yang erat kaitannya dengan proses produksi.",
+    kompetensi: [
+      "Pengetahuan dan keterampilan elektronika umum, mikrokontroller dan mikroprocessor, pneumatic dan PLC, programming berbasis komputer yang erat kaitannya dengan proses produksi di industri.",
+    ],
+    prospekKerja: [
+      "Teknisi industri",
+      "Sound Enginner",
+      "Wirausaha",
+      "Sektor swasta",
+    ],
+  },
+  animasi: {
+    id: "animasi",
+    short: "ANI",
+    title: "Animasi",
+    description:
+      "Mempelajari teori dan teknik dalam membuat animasi 2D, 3D, film, dan game.",
+    icon: ImageIcon,
+    color: "from-purple-500 to-violet-500",
+    image: "/img/detailjurusan/ani.webp",
+    detailDescription:
+      "Jurusan Animasi, yang berdiri sejak 2005, membekali siswa dengan keterampilan kreatif dan teknis untuk menghasilkan konten visual bergerak untuk berbagai platform.",
+    kompetensi: [
+      "3D (Dimensi) Modelling",
+      "Illustration",
+      "Storyboard artist",
+      "Animate 2D dan 3D",
+    ],
+    prospekKerja: [
+      "Animator",
+      "Ilustrator",
+      "Storyboard Artist",
+      "Desain Karakter",
+      "Desainer Grafis",
+      "Konten Kreator",
+    ],
+  },
+  dpib: {
+    id: "dpib",
+    short: "DPIB",
+    title: "Desain Pemodelan & Info Bangunan",
+    description:
+      "Mempelajari perancangan bangunan, pemodelan 3D, dan manajemen BIM.",
+    icon: Building,
+    color: "from-yellow-500 to-lime-500",
+    image: "/img/detailjurusan/dpib.webp", // Gambar default
+    detailDescription:
+      "Program keahlian DPIB mempersiapkan siswa menjadi drafter dan desainer bangunan yang mampu membuat gambar teknik dan model 3D menggunakan teknologi BIM.",
+    kompetensi: [
+      "AutoCAD 2D dan 3D",
+      "Building Information Modeling (BIM)",
+      "SketchUp dan 3D Rendering",
+      "RAB (Rencana Anggaran Biaya)",
+    ],
+    prospekKerja: [
+      "Drafter Arsitektur",
+      "BIM Modeler",
+      "Surveyor",
+      "Quantity Surveyor",
+      "Estimator Biaya",
+    ],
+  },
+  tsm: {
+    id: "tsm",
+    short: "TSM",
+    title: "Teknik Sepeda Motor",
+    description:
+      "Spesialisasi dalam perawatan, perbaikan, dan modifikasi sepeda motor.",
+    icon: Bike,
+    color: "from-orange-500 to-amber-500",
+    image: "/img/detailjurusan/default.webp", // Gambar default
+    detailDescription:
+      "Program keahlian Teknik Sepeda Motor mempersiapkan siswa menjadi mekanik profesional yang ahli dalam perawatan, perbaikan, dan modifikasi sepeda motor modern.",
+    kompetensi: [
+      "Sistem Kelistrikan Sepeda Motor",
+      "Engine Overhaul dan Tune-Up",
+      "Sistem Injeksi Bahan Bakar (EFI)",
+      "Diagnosa Kerusakan",
+    ],
+    prospekKerja: [
+      "Mekanik Sepeda Motor",
+      "Service Advisor",
+      "Workshop Supervisor",
+      "Wirausaha Bengkel Motor",
     ],
   },
 };
 
+const ListItem = memo(
+  ({ icon: Icon, text }: { icon: React.ElementType; text: string }) => (
+    <li className="flex items-start gap-3">
+      <Icon className="w-5 h-5 text-green-500 flex-shrink-0 mt-0.5" />
+      <span className="text-slate-600 dark:text-slate-400">{text}</span>
+    </li>
+  )
+);
+ListItem.displayName = "ListItem";
+
+const ProspekListItem = memo(
+  ({ icon: Icon, text }: { icon: React.ElementType; text: string }) => (
+    <li className="flex items-start gap-3">
+      <Icon className="w-5 h-5 text-purple-500 flex-shrink-0 mt-0.5" />
+      <span className="text-slate-600 dark:text-slate-400">{text}</span>
+    </li>
+  )
+);
+ProspekListItem.displayName = "ProspekListItem";
+
 export default function JurusanDetailPage() {
   const params = useParams();
-  const router = useRouter();
   const id = params.id as string;
   const jurusan = jurusanData[id as keyof typeof jurusanData];
+
+  const [isImageLoaded, setIsImageLoaded] = useState(false);
 
   if (!jurusan) {
     return (
@@ -354,9 +345,8 @@ export default function JurusanDetailPage() {
   const IconComponent = jurusan.icon;
 
   return (
-    <div className="min-h-screen pt-24 pb-8 px-8 md:px-12 lg:px-16">
-      <div className="max-w-6xl mx-auto">
-        {/* Back Button */}
+    <div className="min-h-screen bg-white dark:bg-gray-950 pt-24 pb-16">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         <motion.div
           initial={{ opacity: 0, x: -20 }}
           animate={{ opacity: 1, x: 0 }}
@@ -364,21 +354,20 @@ export default function JurusanDetailPage() {
         >
           <Link
             href="/jurusan"
-            className="inline-flex items-center gap-2 px-4 py-2.5 bg-white dark:bg-gray-900 border-2 border-slate-200 dark:border-gray-700 rounded-lg text-slate-700 dark:text-slate-300 hover:border-blue-500 dark:hover:border-blue-400 hover:text-blue-500 dark:hover:text-blue-400 hover:shadow-md transition-all duration-200 mb-8 font-medium"
+            className="inline-flex items-center gap-2 px-4 py-2.5 bg-white dark:bg-gray-800 border-2 border-slate-200 dark:border-gray-700 rounded-lg text-slate-700 dark:text-slate-300 hover:border-blue-500 dark:hover:border-blue-400 hover:text-blue-500 dark:hover:text-blue-400 hover:shadow-md transition-all duration-200 mb-8 font-medium"
           >
             <ArrowLeft size={20} />
             Kembali ke Daftar Jurusan
           </Link>
         </motion.div>
 
-        {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.1 }}
           className="mb-12"
         >
-          <div className="flex items-start gap-6 mb-6">
+          <div className="flex flex-col sm:flex-row items-start gap-6">
             <div
               className={`w-20 h-20 rounded-2xl flex-shrink-0 flex items-center justify-center bg-gradient-to-br ${jurusan.color} shadow-lg`}
             >
@@ -398,26 +387,31 @@ export default function JurusanDetailPage() {
           </div>
         </motion.div>
 
-        {/* Hero Image Section */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.2 }}
           className="mb-8"
         >
-          <div className="relative w-full h-[400px] md:h-[500px] rounded-2xl overflow-hidden border border-slate-200 dark:border-gray-800 bg-gradient-to-br from-slate-100 to-slate-200 dark:from-gray-800 dark:to-gray-900">
-            <div className="absolute inset-0 flex items-center justify-center">
-              <div className="text-center">
-                <IconComponent className="w-32 h-32 mx-auto mb-4 text-slate-400 dark:text-slate-600" />
-                <p className="text-2xl font-bold text-slate-600 dark:text-slate-400">
-                  {jurusan.title}
-                </p>
-              </div>
-            </div>
+          <div className="relative w-full h-[300px] md:h-[450px] rounded-2xl overflow-hidden border border-slate-200 dark:border-gray-800 bg-slate-100 dark:bg-gray-900">
+            {!isImageLoaded && (
+              <div className="absolute inset-0 bg-slate-200 dark:bg-gray-800 animate-pulse" />
+            )}
+            <Image
+              src={jurusan.image}
+              alt={`Suasana jurusan ${jurusan.title}`}
+              fill
+              priority
+              quality={85}
+              sizes="(max-width: 768px) 100vw, 1200px"
+              className={`object-contain transition-opacity duration-500 ${
+                isImageLoaded ? "opacity-100" : "opacity-0"
+              }`}
+              onLoad={() => setIsImageLoaded(true)}
+            />
           </div>
         </motion.div>
 
-        {/* Detail Description */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -433,7 +427,6 @@ export default function JurusanDetailPage() {
         </motion.div>
 
         <div className="grid md:grid-cols-2 gap-8">
-          {/* Kompetensi */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -449,18 +442,12 @@ export default function JurusanDetailPage() {
               </h2>
             </div>
             <ul className="space-y-3">
-              {jurusan.kompetensi.map((item, index) => (
-                <li key={index} className="flex items-start gap-3">
-                  <CheckCircle2 className="w-5 h-5 text-green-500 flex-shrink-0 mt-0.5" />
-                  <span className="text-slate-600 dark:text-slate-400">
-                    {item}
-                  </span>
-                </li>
+              {jurusan.kompetensi.map((item) => (
+                <ListItem key={item} icon={CheckCircle2} text={item} />
               ))}
             </ul>
           </motion.div>
 
-          {/* Prospek Kerja */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -476,13 +463,8 @@ export default function JurusanDetailPage() {
               </h2>
             </div>
             <ul className="space-y-3">
-              {jurusan.prospekKerja.map((item, index) => (
-                <li key={index} className="flex items-start gap-3">
-                  <Briefcase className="w-5 h-5 text-purple-500 flex-shrink-0 mt-0.5" />
-                  <span className="text-slate-600 dark:text-slate-400">
-                    {item}
-                  </span>
-                </li>
+              {jurusan.prospekKerja.map((item) => (
+                <ProspekListItem key={item} icon={Briefcase} text={item} />
               ))}
             </ul>
           </motion.div>

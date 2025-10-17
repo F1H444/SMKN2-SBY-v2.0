@@ -13,12 +13,25 @@ import React, {
 } from "react";
 import { useTheme } from "next-themes";
 import { useAuth } from "@/app/context/AuthContext";
-import { UserCircle2, LogOut } from "lucide-react"; // Menambahkan ikon LogOut
+import { UserCircle2, LogOut } from "lucide-react";
 
 interface NavItem {
   href: string;
   label: string;
 }
+
+// Data statis didefinisikan di luar komponen untuk efisiensi.
+const NAV_ITEMS: NavItem[] = [
+  { href: "/", label: "Beranda" },
+  { href: "/tentang", label: "Tentang" },
+  { href: "/jurusan", label: "Jurusan" },
+  { href: "/alumni", label: "Alumni" },
+  { href: "/eskul", label: "Ekstrakulikuler" },
+  { href: "/berita", label: "Berita" },
+  { href: "/kontak", label: "Kontak" },
+];
+
+// --- Sub-komponen yang di-memoize untuk performa ---
 
 const NavLink = memo(({ item }: { item: NavItem }) => (
   <Link
@@ -75,116 +88,102 @@ const Logo = memo(
 );
 Logo.displayName = "Logo";
 
-const ChainPull = memo(
-  ({
-    chainLength,
-    dragY,
-    isDragging,
-    isDark,
-    onDragStart,
-    onDrag,
-    onDragEnd,
-  }: any) => (
-    <div className="absolute right-6 top-full mt-2 flex flex-col items-center group z-10">
-      <motion.div
-        className="w-1 bg-gradient-to-b from-gray-400 to-gray-600 dark:from-gray-500 dark:to-gray-300 rounded-full shadow-sm"
-        style={{ height: `${chainLength + dragY}px` }}
-        transition={{
-          duration: isDragging ? 0 : 0.3,
-          ease: "easeOut",
-        }}
-      />
-      <motion.div
-        drag="y"
-        dragConstraints={{ top: 0, bottom: 12 }}
-        dragElastic={0}
-        onDragStart={onDragStart}
-        onDragEnd={onDragEnd}
-        onDrag={onDrag}
-        whileHover={{ scale: 1.05 }}
-        whileDrag={{ scale: 1.12 }}
-        className="w-6 h-6 bg-gradient-to-br from-yellow-400 to-yellow-600 dark:from-yellow-300 dark:to-yellow-500 rounded-full shadow-lg border-2 border-yellow-500 dark:border-yellow-400 transition-shadow duration-200 relative overflow-hidden cursor-grab active:cursor-grabbing"
-        style={{ position: "relative", top: -20, y: 0 }}
-      >
-        <div className="w-full h-full rounded-full bg-gradient-to-br from-yellow-300 to-transparent opacity-60"></div>
-        <div className="absolute inset-0 flex items-center justify-center">
-          <div className="flex flex-col space-y-0.5">
-            <div className="w-3 h-0.5 bg-yellow-700 dark:bg-yellow-200 rounded-full opacity-60" />
-            <div className="w-3 h-0.5 bg-yellow-700 dark:bg-yellow-200 rounded-full opacity-60" />
-            <div className="w-3 h-0.5 bg-yellow-700 dark:bg-yellow-200 rounded-full opacity-60" />
-          </div>
-        </div>
-        <AnimatePresence mode="wait">
-          {isDark && (
-            <motion.div
-              key="sun-icon"
-              initial={{ scale: 0, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0, opacity: 0 }}
-              transition={{ duration: 0.15 }}
-              className="absolute inset-0 flex items-center justify-center bg-yellow-500/90 dark:bg-yellow-400/90 rounded-full backdrop-blur-sm"
+const ChainPull = memo(({ isDark, onDragEnd }: any) => (
+  <div className="absolute right-6 top-full mt-2 flex flex-col items-center group z-10">
+    <motion.div
+      className="w-1 bg-gradient-to-b from-gray-400 to-gray-600 dark:from-gray-500 dark:to-gray-300 rounded-full shadow-sm"
+      animate={{ height: 48 }}
+      transition={{ duration: 0.3, ease: "easeOut" }}
+    />
+    <motion.div
+      drag="y"
+      dragConstraints={{ top: 0, bottom: 12 }}
+      dragElastic={0.1}
+      onDragEnd={onDragEnd}
+      whileHover={{ scale: 1.05 }}
+      whileDrag={{ scale: 1.12 }}
+      className="w-6 h-6 bg-gradient-to-br from-yellow-400 to-yellow-600 dark:from-yellow-300 dark:to-yellow-500 rounded-full shadow-lg border-2 border-yellow-500 dark:border-yellow-400 cursor-grab active:cursor-grabbing"
+    >
+      <AnimatePresence mode="wait">
+        {isDark ? (
+          <motion.div
+            key="sun"
+            initial={{ scale: 0, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            exit={{ scale: 0, opacity: 0 }}
+            transition={{ duration: 0.2 }}
+            className="flex items-center justify-center h-full"
+          >
+            <svg
+              width="12"
+              height="12"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              className="text-gray-800"
             >
-              <svg
-                width="12"
-                height="12"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                className="text-gray-800"
-              >
-                <circle cx="12" cy="12" r="5" />
-                <line x1="12" y1="1" x2="12" y2="3" />
-                <line x1="12" y1="21" x2="12" y2="23" />
-                <line x1="4.22" y1="4.22" x2="5.64" y2="5.64" />
-                <line x1="18.36" y1="18.36" x2="19.78" y2="19.78" />
-                <line x1="1" y1="12" x2="3" y2="12" />
-                <line x1="21" y1="12" x2="23" y2="12" />
-                <line x1="4.22" y1="19.78" x2="5.64" y2="18.36" />
-                <line x1="18.36" y1="5.64" x2="19.78" y2="4.22" />
-              </svg>
-            </motion.div>
-          )}
-        </AnimatePresence>
-      </motion.div>
-    </div>
-  )
-);
+              <circle cx="12" cy="12" r="5"></circle>
+              <line x1="12" y1="1" x2="12" y2="3"></line>
+              <line x1="12" y1="21" x2="12" y2="23"></line>
+              <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+              <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+              <line x1="1" y1="12" x2="3" y2="12"></line>
+              <line x1="21" y1="12" x2="23" y2="12"></line>
+              <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+              <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+            </svg>
+          </motion.div>
+        ) : (
+          <motion.div
+            key="moon"
+            initial={{ scale: 0, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            exit={{ scale: 0, opacity: 0 }}
+            transition={{ duration: 0.2 }}
+            className="flex items-center justify-center h-full"
+          >
+            <svg
+              width="12"
+              height="12"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              className="text-gray-100"
+            >
+              <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+            </svg>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </motion.div>
+  </div>
+));
 ChainPull.displayName = "ChainPull";
 
 export function Lamphome({
   logoSrc,
   logoSrcDark,
   logoAlt,
-  navItems = [
-    { href: "/", label: "Beranda" },
-    { href: "/tentang", label: "Tentang" },
-    { href: "/jurusan", label: "Jurusan" },
-    { href: "/alumni", label: "Alumni" },
-    { href: "/eskul", label: "Ekstrakulikuler" },
-    { href: "/berita", label: "Berita" },
-    { href: "/kontak", label: "Kontak" },
-  ],
+  navItems = NAV_ITEMS,
   children,
   className = "",
 }: any): React.JSX.Element {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [chainState, setChainState] = useState({
-    pulled: false,
-    length: 48,
-    dragY: 0,
-    isDragging: false,
-  });
-  const [isProfileOpen, setIsProfileOpen] = useState(false); // State untuk dropdown profil
+  const [isProfileOpen, setIsProfileOpen] = useState(false);
+  const [isMounted, setIsMounted] = useState(false);
 
   const profileRef = useRef<HTMLDivElement>(null);
-  const navBarRef = useRef<HTMLDivElement>(null);
   const { theme, setTheme, resolvedTheme } = useTheme();
-  const isDarkMode = resolvedTheme === "dark";
-
   const { isLoggedIn, isLoading, logout } = useAuth();
 
-  // Menutup dropdown jika klik di luar
+  const isDarkMode = resolvedTheme === "dark";
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (
@@ -198,32 +197,22 @@ export function Lamphome({
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  // (semua handler lain seperti handleDrag, dll, tetap sama)
-  const handleDragStart = useCallback(() => {
-    setChainState((prev) => ({ ...prev, isDragging: true }));
-  }, []);
-  const handleDrag = useCallback((event: any, info: PanInfo) => {
-    const newDragY = Math.max(0, info.offset.y);
-    setChainState((prev) =>
-      Math.abs(prev.dragY - newDragY) > 1 ? { ...prev, dragY: newDragY } : prev
-    );
-  }, []);
   const handleDragEnd = useCallback(
     (event: any, info: PanInfo) => {
-      if (Math.max(0, info.offset.y) > 8) {
-        const newTheme = resolvedTheme === "dark" ? "light" : "dark";
-        setTheme(newTheme);
+      if (info.offset.y > 8) {
+        setTheme(resolvedTheme === "dark" ? "light" : "dark");
       }
-      setChainState((prev) => ({ ...prev, isDragging: false, dragY: 0 }));
     },
     [resolvedTheme, setTheme]
   );
+
   const toggleMobileMenu = useCallback(() => {
     setMobileMenuOpen((prev) => !prev);
   }, []);
 
   const navLinksRender = useMemo(
-    () => navItems.map((item: NavItem) => <NavLink key={item.href} item={item} />),
+    () =>
+      navItems.map((item: NavItem) => <NavLink key={item.href} item={item} />),
     [navItems]
   );
   const mobileNavLinksRender = useMemo(
@@ -235,21 +224,18 @@ export function Lamphome({
   );
 
   return (
-    <div
-      suppressHydrationWarning
-      className={`min-h-full w-full flex flex-col items-center justify-start transition-all duration-500 text-gray-900 dark:text-white ${className}`}
-    >
-      <div
-        ref={navBarRef}
-        className="fixed top-6 flex items-center justify-between w-[95%] max-w-6xl h-auto py-3 px-3 md:px-6 bg-white/80 dark:bg-neutral-950 backdrop-blur-sm border-2 border-white dark:border-white/20 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 z-50"
-      >
+    <>
+      {/* PERUBAHAN KUNCI: Menambahkan left-1/2 -translate-x-1/2 untuk centering horizontal */}
+      <div className="fixed top-6 left-1/2 -translate-x-1/2 flex items-center justify-between w-[95%] max-w-6xl py-3 px-3 md:px-6 bg-white/80 dark:bg-neutral-950/80 backdrop-blur-sm border-2 border-white dark:border-white/20 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 z-50">
         <div className="flex items-center flex-shrink-0">
-          <Logo
-            src={logoSrc}
-            srcDark={logoSrcDark}
-            alt={logoAlt}
-            isDark={isDarkMode}
-          />
+          {isMounted && (
+            <Logo
+              src={logoSrc}
+              srcDark={logoSrcDark}
+              alt={logoAlt}
+              isDark={isDarkMode}
+            />
+          )}
         </div>
 
         <nav className="hidden lg:flex items-center space-x-4 xl:space-x-6 flex-1 justify-center">
@@ -258,9 +244,6 @@ export function Lamphome({
 
         <div className="flex items-center space-x-2 sm:space-x-3 flex-shrink-0">
           <div className="relative" ref={profileRef}>
-            {/* PERUBAHAN: Tampilkan placeholder saat loading untuk mencegah "flash",
-              lalu tampilkan tombol sesuai status login.
-            */}
             {isLoading ? (
               <div className="hidden sm:flex items-center justify-center w-[86px] h-[36px] bg-slate-200 dark:bg-slate-700 rounded-lg animate-pulse" />
             ) : isLoggedIn ? (
@@ -282,7 +265,6 @@ export function Lamphome({
               </Link>
             )}
 
-            {/* Dropdown Menu untuk Profil */}
             <AnimatePresence>
               {isProfileOpen && isLoggedIn && (
                 <motion.div
@@ -341,15 +323,9 @@ export function Lamphome({
           </button>
         </div>
 
-        <ChainPull
-          chainLength={chainState.length}
-          dragY={chainState.dragY}
-          isDragging={chainState.isDragging}
-          isDark={isDarkMode}
-          onDragStart={handleDragStart}
-          onDrag={handleDrag}
-          onDragEnd={handleDragEnd}
-        />
+        {isMounted && (
+          <ChainPull isDark={isDarkMode} onDragEnd={handleDragEnd} />
+        )}
 
         <AnimatePresence>
           {mobileMenuOpen && (
@@ -358,15 +334,19 @@ export function Lamphome({
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -10 }}
               transition={{ duration: 0.2 }}
-              className="absolute top-full left-0 right-0 mt-2 lg:hidden bg-white dark:bg-neutral-950 border border-gray-200 dark:border-gray-700 rounded-xl shadow-lg backdrop-blur-sm z-50 max-h-[calc(100vh-120px)] overflow-y-auto"
+              className="absolute top-full left-0 right-0 mt-2 lg:hidden bg-white/90 dark:bg-neutral-950/90 border border-gray-200 dark:border-gray-700/50 rounded-xl shadow-lg backdrop-blur-sm z-50 max-h-[calc(100vh-120px)] overflow-y-auto"
             >
               <nav className="flex flex-col py-2">
                 {mobileNavLinksRender}
-                <div className="border-t border-gray-200 dark:border-gray-700 mt-2 pt-2 px-4 pb-2">
-                  <button className="sm:hidden w-full py-2.5 bg-gradient-to-r from-blue-500 to-purple-500 text-white font-medium text-sm rounded-lg hover:from-blue-600 hover:to-purple-600 transition-all duration-200 shadow-md">
-                    Login
-                  </button>
-                </div>
+                {!isLoggedIn && (
+                  <div className="border-t border-gray-200 dark:border-gray-700 mt-2 pt-2 px-4 pb-2">
+                    <Link href="/login" passHref>
+                      <button className="sm:hidden w-full py-2.5 bg-gradient-to-r from-blue-500 to-purple-500 text-white font-medium text-sm rounded-lg shadow-md">
+                        Login
+                      </button>
+                    </Link>
+                  </div>
+                )}
               </nav>
             </motion.div>
           )}
@@ -374,6 +354,6 @@ export function Lamphome({
       </div>
 
       <main className="w-full">{children}</main>
-    </div>
+    </>
   );
 }

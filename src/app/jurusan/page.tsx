@@ -7,7 +7,7 @@ export default function Home() {
     <>
       <HeroSection
         title="Jurusan Yang Tersedia"
-        backgroundImage="/img/smkn2.webp"
+        backgroundImage="/img/hero/jurusan.webp"
         ctaText="Jelajahi Lebih Lanjut"
         ctaColor="bg-blue-600 hover:bg-blue-700"
       />

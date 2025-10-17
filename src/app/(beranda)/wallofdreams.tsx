@@ -1,12 +1,11 @@
+// app/(home)/wallofdreams.tsx (Full Code - Optimized)
+
 "use client";
 
 import React, { useState, useCallback, useRef, memo } from "react";
 import { ZoomIn, ZoomOut, Plus, X, Sparkles, Star, Move } from "lucide-react";
 import { useRouter } from "next/navigation";
 
-// =================================================================================
-// TIPE DATA & KONSTANTA
-// =================================================================================
 interface Dream {
   id: number;
   text: string;
@@ -17,7 +16,7 @@ interface Dream {
   rotation: number;
 }
 
-// Data awal tidak berubah
+// OPTIMASI: Data statis di luar komponen.
 const INITIAL_DREAMS: Dream[] = [
   {
     id: 1,
@@ -93,7 +92,6 @@ const INITIAL_DREAMS: Dream[] = [
   },
 ];
 
-// REFAKTOR: Menggunakan kelas Tailwind untuk adaptasi tema otomatis
 const DREAM_THEMES = {
   amber: {
     container: "bg-amber-50 dark:bg-amber-900/50 border-amber-500",
@@ -161,23 +159,17 @@ const DREAM_THEMES = {
   },
 };
 
-// =================================================================================
-// KOMPONEN ANAK
-// =================================================================================
-
 const DreamNote = memo(
   ({
     dream,
     onDragStart,
   }: {
     dream: Dream;
-    onDragStart: (e: React.DragEvent, dream: Dream) => void;
+    onDragStart: (e: React.DragEvent, d: Dream) => void;
   }) => {
     const theme = DREAM_THEMES[dream.color as keyof typeof DREAM_THEMES];
-
     return (
       <div
-        key={dream.id}
         draggable
         onDragStart={(e) => onDragStart(e, dream)}
         className="absolute cursor-grab active:cursor-grabbing hover:z-10 group"
@@ -205,7 +197,6 @@ const DreamNote = memo(
                 {dream.text}
               </p>
             </div>
-
             <div className={`mt-auto pt-3 border-t-2 ${theme.divider}`}>
               <div className="flex items-center gap-2">
                 <div
@@ -233,7 +224,6 @@ const LoginPromptModal = memo(
   ({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) => {
     const router = useRouter();
     if (!isOpen) return null;
-
     return (
       <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 dark:bg-black/80 backdrop-blur-md animate-in fade-in duration-300">
         <div
@@ -247,7 +237,6 @@ const LoginPromptModal = memo(
           >
             <X size={20} />
           </button>
-
           <div className="text-center">
             <div className="w-20 h-20 mx-auto mb-5 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-2xl flex items-center justify-center shadow-xl">
               <Sparkles size={40} className="text-white" />
@@ -273,11 +262,7 @@ const LoginPromptModal = memo(
 );
 LoginPromptModal.displayName = "LoginPromptModal";
 
-// =================================================================================
-// KOMPONEN UTAMA
-// =================================================================================
-
-const WallOfDreams = () => {
+export default function WallOfDreams() {
   const [dreams, setDreams] = useState<Dream[]>(INITIAL_DREAMS);
   const [showLoginModal, setShowLoginModal] = useState(false);
   const [zoom, setZoom] = useState(1);
@@ -287,17 +272,8 @@ const WallOfDreams = () => {
   const handleAddDreamClick = useCallback(() => setShowLoginModal(true), []);
   const handleDragStart = useCallback((e: React.DragEvent, dream: Dream) => {
     setDraggedDream(dream);
-    if (e.dataTransfer) {
-      const img = new Image();
-      img.src =
-        "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7";
-      e.dataTransfer.setDragImage(img, 0, 0);
-    }
+    e.dataTransfer.setDragImage(new Image(), 0, 0);
   }, []);
-  const handleDragOver = useCallback(
-    (e: React.DragEvent) => e.preventDefault(),
-    []
-  );
   const handleDrop = useCallback(
     (e: React.DragEvent) => {
       e.preventDefault();
@@ -321,7 +297,6 @@ const WallOfDreams = () => {
   return (
     <div className="min-h-screen bg-transparent">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
-        {/* Header */}
         <div className="text-center mb-10">
           <div className="inline-flex items-center gap-2 px-5 py-2.5 bg-white dark:bg-slate-800/50 dark:border-slate-700 rounded-full mb-5 shadow-lg border-2 border-indigo-100 backdrop-blur-sm">
             <Star size={18} className="text-amber-500" fill="currentColor" />
@@ -339,10 +314,7 @@ const WallOfDreams = () => {
             lainnya.
           </p>
         </div>
-
-        {/* Main Canvas */}
         <div className="bg-white dark:bg-slate-900 rounded-3xl shadow-2xl dark:shadow-black/50 overflow-hidden border-2 border-gray-200 dark:border-slate-700">
-          {/* Toolbar */}
           <div className="bg-gradient-to-r from-indigo-50 via-purple-50 to-pink-50 dark:from-slate-800/50 dark:via-slate-900/50 dark:to-slate-800/50 p-5 border-b-2 border-gray-200 dark:border-slate-700">
             <div className="flex items-center justify-between gap-4 flex-wrap">
               <div className="flex items-center gap-3">
@@ -381,11 +353,9 @@ const WallOfDreams = () => {
               </button>
             </div>
           </div>
-
-          {/* Canvas */}
           <div
             ref={canvasContainerRef}
-            onDragOver={handleDragOver}
+            onDragOver={(e) => e.preventDefault()}
             onDrop={handleDrop}
             className="relative h-[700px] overflow-auto bg-gradient-to-br from-gray-50 via-blue-50 to-purple-50 dark:from-slate-800/10 dark:via-transparent dark:to-slate-800/10"
           >
@@ -394,33 +364,24 @@ const WallOfDreams = () => {
               style={{
                 transform: `scale(${zoom})`,
                 transformOrigin: "top left",
+                willChange: "transform",
               }}
             >
               <div className="relative w-[5000px] h-[5000px]">
-                {/* Grid Pattern with CSS Variable for theme switching */}
                 <div
                   className="absolute inset-0 opacity-10 dark:opacity-20"
                   style={{
-                    "--grid-color-light": "#e5e7eb", // gray-200
-                    "--grid-color-dark": "#475569", // slate-600
-                    backgroundImage: `
-                      linear-gradient(to right, var(--grid-color-light, #e5e7eb) 1px, transparent 1px),
-                      linear-gradient(to bottom, var(--grid-color-light, #e5e7eb) 1px, transparent 1px)
-                    `,
+                    backgroundImage: `linear-gradient(to right, #e5e7eb 1px, transparent 1px), linear-gradient(to bottom, #e5e7eb 1px, transparent 1px)`,
                     backgroundSize: "50px 50px",
-                  } as React.CSSProperties}
+                  }}
                 />
                 <div
                   className="absolute inset-0 opacity-0 dark:opacity-20"
                   style={{
-                    backgroundImage: `
-                      linear-gradient(to right, var(--grid-color-dark, #475569) 1px, transparent 1px),
-                      linear-gradient(to bottom, var(--grid-color-dark, #475569) 1px, transparent 1px)
-                    `,
+                    backgroundImage: `linear-gradient(to right, #475569 1px, transparent 1px), linear-gradient(to bottom, #475569 1px, transparent 1px)`,
                     backgroundSize: "50px 50px",
                   }}
                 />
-
                 {dreams.map((dream) => (
                   <DreamNote
                     key={dream.id}
@@ -433,13 +394,10 @@ const WallOfDreams = () => {
           </div>
         </div>
       </div>
-
       <LoginPromptModal
         isOpen={showLoginModal}
         onClose={() => setShowLoginModal(false)}
       />
     </div>
   );
-};
-
-export default WallOfDreams;
+}

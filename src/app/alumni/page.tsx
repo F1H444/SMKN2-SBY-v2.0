@@ -8,7 +8,7 @@ export default function Home() {
     <>
       <HeroSection
         title="Alumni"
-        backgroundImage="/img/smkn2.webp"
+        backgroundImage="/img/slider/alumni.webp"
         ctaText="Jelajahi Lebih Lanjut"
         ctaColor="bg-blue-600 hover:bg-blue-700"
       />

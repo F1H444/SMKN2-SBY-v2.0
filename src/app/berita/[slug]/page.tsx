@@ -272,17 +272,6 @@ export default function NewsDetailPage() {
                   dangerouslySetInnerHTML={{ __html: newsDetail.content }}
                 />
 
-                <div className="flex flex-wrap gap-2 mb-8 pb-8 border-b border-gray-200 dark:border-gray-700">
-                  {newsDetail.tags.map((tag, index) => (
-                    <span
-                      key={index}
-                      className="px-4 py-2 bg-gradient-to-r from-blue-100 to-purple-100 dark:from-blue-900/30 dark:to-purple-900/30 text-blue-700 dark:text-blue-300 rounded-full text-sm font-medium"
-                    >
-                      #{tag}
-                    </span>
-                  ))}
-                </div>
-
                 <div className="flex flex-wrap items-center gap-4 mb-8">
                   <button
                     onClick={handleLike}

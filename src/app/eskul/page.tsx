@@ -7,7 +7,7 @@ export default function Home() {
     <>
       <HeroSection
         title="Ekstrakulikuler"
-        backgroundImage="/img/smkn2.webp"
+        backgroundImage="/img/hero/eskul.webp"
         ctaText="Jelajahi Lebih Lanjut"
         ctaColor="bg-blue-600 hover:bg-blue-700"
       />

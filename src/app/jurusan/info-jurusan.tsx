@@ -3,7 +3,7 @@
 import { useEffect, useRef } from "react";
 import { motion } from "framer-motion";
 import {
-  Image,
+  Image as ImageIcon,
   Code,
   Cpu,
   Wrench,
@@ -22,13 +22,14 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 
 gsap.registerPlugin(ScrollTrigger);
 
+// PERBAIKAN: ID disesuaikan agar konsisten dengan halaman detail
 const jurusanData = [
   {
     id: "rpl",
     short: "RPL",
     title: "Rekayasa Perangkat Lunak",
     description:
-      "Mempelajari pengembangan, pemeliharaan, dan manajemen kualitas perangkat lunak secara sistematis.",
+      "Mempelajari pengembangan, pemeliharaan, dan manajemen kualitas perangkat lunak.",
     icon: Code,
     color: "from-blue-500 to-cyan-500",
   },
@@ -37,7 +38,7 @@ const jurusanData = [
     short: "TKJ",
     title: "Teknik Komputer dan Jaringan",
     description:
-      "Fokus pada perancangan, instalasi, dan konfigurasi infrastruktur jaringan komputer dan server.",
+      "Fokus pada perancangan, instalasi, dan konfigurasi infrastruktur jaringan.",
     icon: Cpu,
     color: "from-green-500 to-emerald-500",
   },
@@ -46,7 +47,7 @@ const jurusanData = [
     short: "TPM",
     title: "Teknik Pemesinan",
     description:
-      "Mengasah keterampilan dalam proses produksi manufaktur menggunakan mesin perkakas presisi.",
+      "Mengasah keterampilan produksi manufaktur menggunakan mesin perkakas presisi.",
     icon: Wrench,
     color: "from-slate-500 to-gray-600",
   },
@@ -55,7 +56,7 @@ const jurusanData = [
     short: "TSM",
     title: "Teknik Sepeda Motor",
     description:
-      "Spesialisasi dalam perawatan, perbaikan, dan modifikasi teknologi sepeda motor modern.",
+      "Spesialisasi dalam perawatan, perbaikan, dan modifikasi sepeda motor.",
     icon: Bike,
     color: "from-orange-500 to-amber-500",
   },
@@ -73,7 +74,7 @@ const jurusanData = [
     short: "DPIB",
     title: "Desain Pemodelan & Info Bangunan",
     description:
-      "Mempelajari perancangan bangunan, pemodelan 3D, dan manajemen informasi konstruksi (BIM).",
+      "Mempelajari perancangan bangunan, pemodelan 3D, dan manajemen BIM.",
     icon: Building,
     color: "from-yellow-500 to-lime-500",
   },
@@ -81,8 +82,7 @@ const jurusanData = [
     id: "tkp",
     short: "TKP",
     title: "Teknik Konstruksi & Perumahan",
-    description:
-      "Fokus pada pelaksanaan, pengawasan, dan manajemen proyek konstruksi gedung dan perumahan.",
+    description: "Fokus pada pelaksanaan dan pengawasan proyek konstruksi.",
     icon: Home,
     color: "from-stone-500 to-neutral-500",
   },
@@ -91,25 +91,25 @@ const jurusanData = [
     short: "ANI",
     title: "Animasi",
     description:
-      "Mengembangkan kreativitas dalam pembuatan animasi 2D, 3D, dan efek visual untuk berbagai media.",
-    icon: Image,
+      "Mengembangkan kreativitas dalam pembuatan animasi 2D, 3D, dan efek visual.",
+    icon: ImageIcon,
     color: "from-purple-500 to-violet-500",
   },
   {
-    id: "elektro",
+    id: "tei",
     short: "TEI",
     title: "Teknik Elektronika Industri",
     description:
-      "Mempelajari perancangan, perakitan, dan pemeliharaan sistem kontrol elektronik di industri.",
+      "Mempelajari perancangan dan pemeliharaan sistem kontrol elektronik.",
     icon: CircuitBoard,
     color: "from-teal-500 to-cyan-500",
-  },
+  }, // ID diubah dari "elektro" menjadi "tei"
   {
     id: "tav",
     short: "TAV",
     title: "Teknik Audio Video",
     description:
-      "Fokus pada perbaikan, instalasi, dan perawatan perangkat elektronik audio dan video.",
+      "Fokus pada perbaikan, instalasi, dan perawatan perangkat audio visual.",
     icon: Video,
     color: "from-fuchsia-500 to-pink-500",
   },
@@ -117,8 +117,7 @@ const jurusanData = [
     id: "titl",
     short: "TITL",
     title: "Teknik Instalasi Tenaga Listrik",
-    description:
-      "Berfokus pada instalasi, pemeliharaan, dan perbaikan sistem tenaga listrik di gedung dan industri.",
+    description: "Berfokus pada instalasi dan perbaikan sistem tenaga listrik.",
     icon: Zap,
     color: "from-sky-500 to-indigo-500",
   },
@@ -129,10 +128,9 @@ export default function JurusanPage() {
 
   useEffect(() => {
     const ctx = gsap.context(() => {
-      // Animasi scroll trigger untuk cards
       gsap.fromTo(
         ".jurusan-card",
-        { opacity: 0, y: 50, scale: 0.9 },
+        { opacity: 0, y: 50, scale: 0.95 },
         {
           opacity: 1,
           y: 0,
@@ -142,73 +140,19 @@ export default function JurusanPage() {
           stagger: 0.1,
           scrollTrigger: {
             trigger: ".jurusan-grid",
-            start: "top bottom-=100px",
+            start: "top bottom-=150px",
             toggleActions: "play none none none",
           },
         }
       );
-
-      // Hover effect untuk setiap card
-      const cards = gsap.utils.toArray<HTMLElement>(".jurusan-card");
-      const listeners: Array<{
-        element: HTMLElement;
-        moveHandler: (e: MouseEvent) => void;
-        leaveHandler: () => void;
-      }> = [];
-
-      cards.forEach((card) => {
-        const handleMouseMove = (e: MouseEvent) => {
-          const rect = card.getBoundingClientRect();
-          const x = e.clientX - rect.left - rect.width / 2;
-          const y = e.clientY - rect.top - rect.height / 2;
-
-          gsap.to(card, {
-            rotationY: (x / rect.width) * 20,
-            rotationX: (-y / rect.height) * 20,
-            transformPerspective: 1000,
-            scale: 1.05,
-            ease: "power2.out",
-            duration: 0.5,
-          });
-        };
-
-        const handleMouseLeave = () => {
-          gsap.to(card, {
-            rotationY: 0,
-            rotationX: 0,
-            scale: 1,
-            ease: "elastic.out(1, 0.5)",
-            duration: 1.2,
-          });
-        };
-
-        card.addEventListener("mousemove", handleMouseMove);
-        card.addEventListener("mouseleave", handleMouseLeave);
-
-        // Simpan reference untuk cleanup
-        listeners.push({
-          element: card,
-          moveHandler: handleMouseMove,
-          leaveHandler: handleMouseLeave,
-        });
-      });
-
-      // Cleanup event listeners
-      return () => {
-        listeners.forEach(({ element, moveHandler, leaveHandler }) => {
-          element.removeEventListener("mousemove", moveHandler);
-          element.removeEventListener("mouseleave", leaveHandler);
-        });
-      };
     }, main);
-
     return () => ctx.revert();
   }, []);
 
   return (
     <div
       ref={main}
-      className="min-h-screen p-8 md:p-12 lg:p-16 text-slate-800 dark:text-slate-200"
+      className="min-h-screen p-8 md:p-12 lg:p-16 bg-white dark:bg-gray-950"
     >
       <div className="max-w-7xl mx-auto">
         <motion.div
@@ -228,45 +172,50 @@ export default function JurusanPage() {
           </p>
         </motion.div>
 
-        <div className="jurusan-grid grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
-          {jurusanData.map((item) => (
-            <div key={item.id} className="jurusan-card opacity-0">
-              <Link
-                href={`/jurusan/${item.id}`}
-                className="bg-white dark:bg-gray-900 border border-slate-200 dark:border-gray-800 rounded-2xl p-6 relative group overflow-hidden transition-colors duration-300 hover:border-blue-500 h-full flex flex-col justify-between"
+        <div className="jurusan-grid grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 md:gap-8">
+          {jurusanData.map((item) => {
+            const IconComponent = item.icon;
+            return (
+              <div
+                key={item.id}
+                className="jurusan-card opacity-0"
+                style={{ perspective: "1000px" }}
               >
-                <div>
-                  <div className="relative z-10">
-                    <div
-                      className={`w-12 h-12 rounded-lg flex items-center justify-center bg-gradient-to-br ${item.color}`}
-                    >
-                      <item.icon className="w-6 h-6 text-white" />
+                <Link
+                  href={`/jurusan/${item.id}`}
+                  className="bg-white dark:bg-gray-900 border border-slate-200 dark:border-gray-800 rounded-2xl p-6 relative group overflow-hidden transition-all duration-300 hover:border-blue-500 hover:shadow-2xl hover:shadow-blue-500/10 h-full flex flex-col justify-between block"
+                >
+                  <div>
+                    <div className="relative z-10">
+                      <div
+                        className={`w-12 h-12 rounded-lg flex items-center justify-center bg-gradient-to-br ${item.color} shadow-lg group-hover:scale-110 transition-transform`}
+                      >
+                        <IconComponent className="w-6 h-6 text-white" />
+                      </div>
+                      <h3 className="mt-4 text-xl font-bold text-slate-900 dark:text-gray-100">
+                        {item.title}
+                      </h3>
+                      <p className="mt-2 text-slate-600 dark:text-gray-400 text-sm">
+                        {item.description}
+                      </p>
                     </div>
-                    <h3 className="mt-4 text-xl font-bold text-slate-900 dark:text-gray-100">
-                      {item.title}
-                    </h3>
-                    <p className="mt-2 text-slate-600 dark:text-gray-400 text-sm">
-                      {item.description}
-                    </p>
                   </div>
-                </div>
-
-                <div className="mt-4 z-10">
-                  <div className="inline-flex items-center gap-2 text-sm font-semibold text-blue-600 dark:text-blue-400 transition-colors duration-300 group-hover:text-blue-500 dark:group-hover:text-blue-300">
-                    Selengkapnya
-                    <ArrowRight
-                      size={16}
-                      className="transition-transform duration-300 group-hover:translate-x-1"
-                    />
+                  <div className="mt-4 z-10">
+                    <div className="inline-flex items-center gap-2 text-sm font-semibold text-blue-600 dark:text-blue-400 transition-colors duration-300">
+                      Selengkapnya
+                      <ArrowRight
+                        size={16}
+                        className="transition-transform duration-300 group-hover:translate-x-1"
+                      />
+                    </div>
                   </div>
-                </div>
-
-                <div
-                  className={`absolute -bottom-10 -right-10 w-28 h-28 bg-gradient-to-br ${item.color} rounded-full opacity-10 transition-all duration-500 ease-in-out group-hover:opacity-20 group-hover:scale-150`}
-                ></div>
-              </Link>
-            </div>
-          ))}
+                  <div
+                    className={`absolute -bottom-10 -right-10 w-28 h-28 bg-gradient-to-br ${item.color} rounded-full opacity-10 transition-all duration-500 ease-in-out group-hover:opacity-20 group-hover:scale-150`}
+                  ></div>
+                </Link>
+              </div>
+            );
+          })}
         </div>
       </div>
     </div>
