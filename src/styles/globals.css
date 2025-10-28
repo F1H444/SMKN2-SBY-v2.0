@@ -119,10 +119,12 @@
   body {
     @apply bg-background text-foreground;
     overflow-x: hidden;
+    font-family: var(--font-poppins), sans-serif;
   }
 }
 
-::view-transition-old(root), ::view-transition-new(root) {
-    animation: none;
-    mix-blend-mode: normal;
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation: none;
+  mix-blend-mode: normal;
 }

@@ -11,7 +11,7 @@ const AlumniPage = () => {
     {
       id: 1,
       name: "Marsekal TNI (Purn.) Soewoto Sukendar",
-      image: "https://api.dicebear.com/7.x/avataaars/svg?seed=Soewoto",
+      image: "/img/profil.jpg", // DIUBAH
       department: "Teknik Penerbangan",
       year: "1945",
       position: "Kepala Staf TNI Angkatan Udara (KASAU)",
@@ -23,7 +23,7 @@ const AlumniPage = () => {
     {
       id: 2,
       name: "Jenderal TNI (Purn.) Widjojo Soejono",
-      image: "https://api.dicebear.com/7.x/avataaars/svg?seed=Widjojo",
+      image: "/img/profil.jpg", // DIUBAH
       department: "Teknik Mesin",
       year: "1948",
       position: "Kepala Staf Kopkamtib",
@@ -35,7 +35,7 @@ const AlumniPage = () => {
     {
       id: 3,
       name: "Letnan Jenderal TNI (Purn.) Bambang Triantoro",
-      image: "https://api.dicebear.com/7.x/avataaars/svg?seed=Bambang",
+      image: "/img/profil.jpg", // DIUBAH
       department: "Teknik Bangunan",
       year: "1955",
       position: "Sekretaris Jenderal",
@@ -47,7 +47,7 @@ const AlumniPage = () => {
     {
       id: 4,
       name: "Cak Kartolo",
-      image: "https://api.dicebear.com/7.x/avataaars/svg?seed=Kartolo",
+      image: "/img/profil.jpg", // DIUBAH
       department: "Seni dan Budaya",
       year: "1960",
       position: "Seniman Ludruk Legendaris",
@@ -59,7 +59,7 @@ const AlumniPage = () => {
     {
       id: 5,
       name: "Drs. H. M. Said",
-      image: "https://api.dicebear.com/7.x/avataaars/svg?seed=Said",
+      image: "/img/profil.jpg", // DIUBAH
       department: "Teknik Mesin",
       year: "1962",
       position: "Kepala Sekolah",
@@ -71,7 +71,7 @@ const AlumniPage = () => {
     {
       id: 6,
       name: "Budi Sulistyo",
-      image: "https://api.dicebear.com/7.x/avataaars/svg?seed=BudiSulistyo",
+      image: "/img/profil.jpg", // DIUBAH
       department: "Teknik Otomotif",
       year: "1985",
       position: "Pengusaha Otomotif",
@@ -83,7 +83,7 @@ const AlumniPage = () => {
     {
       id: 7,
       name: "Dr. Ir. Wahid Wahyudi, M.T.",
-      image: "https://api.dicebear.com/7.x/avataaars/svg?seed=Wahid",
+      image: "/img/profil.jpg", // DIUBAH
       department: "Teknik Sipil",
       year: "1979",
       position: "Kepala Dinas Pendidikan Provinsi Jawa Timur",
@@ -95,7 +95,7 @@ const AlumniPage = () => {
     {
       id: 8,
       name: "Prof. Dr. Ir. Mochamad Ashari, M.Eng.",
-      image: "https://api.dicebear.com/7.x/avataaars/svg?seed=Ashari",
+      image: "/img/profil.jpg", // DIUBAH
       department: "Teknik Elektro",
       year: "1982",
       position: "Rektor",
@@ -125,19 +125,13 @@ const AlumniPage = () => {
   }, [searchTerm, selectedDepartment, alumniData]);
 
   return (
-    // --- PERBAIKAN UTAMA ---
-    // Class bg-white dark:bg-black DIHAPUS dari div ini.
-    // Sekarang div ini akan transparan dan mengambil warna dari `body`
-    // yang diatur oleh `bg-background` di globals.css
     <div className="min-h-screen">
       <div className="max-w-7xl mx-auto px-6 py-16">
         {/* Header */}
         <div className="text-center mb-12">
-          {/* Menggunakan `text-foreground` dari tema */}
           <h1 className="text-5xl md:text-6xl font-bold text-foreground mb-4">
             Alumni SMKN 2 Surabaya
           </h1>
-          {/* Menggunakan `text-muted-foreground` dari tema */}
           <p className="text-lg text-muted-foreground max-w-3xl mx-auto">
             Jejak prestasi para alumni yang telah mengukir kesuksesan dan
             memberikan kontribusi nyata bagi bangsa dan negara.
@@ -146,7 +140,6 @@ const AlumniPage = () => {
 
         {/* Filter Section */}
         <div className="mb-12">
-          {/* Menggunakan `bg-muted` dan `border-border` dari tema */}
           <div className="bg-muted rounded-2xl border border-border p-6 shadow-lg">
             <div className="flex flex-col md:flex-row gap-4">
               {/* Search */}
@@ -157,7 +150,6 @@ const AlumniPage = () => {
                   placeholder="Cari nama, perusahaan, atau posisi..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  // Menggunakan warna `input` dan `ring` dari tema
                   className="w-full pl-12 pr-4 py-3 bg-background border-2 border-input rounded-xl focus:border-primary focus:ring-4 focus:ring-ring/20 transition-all outline-none text-foreground"
                 />
               </div>
@@ -195,7 +187,6 @@ const AlumniPage = () => {
             {filteredAlumni.map((alumni) => (
               <div
                 key={alumni.id}
-                // Menggunakan `bg-card` dan `border-border` dari tema
                 className="bg-card rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 border border-border hover:border-primary/50 hover:-translate-y-2 flex flex-col"
               >
                 <div className="p-6 flex flex-col items-center text-center">
@@ -204,9 +195,10 @@ const AlumniPage = () => {
                       src={alumni.image}
                       alt={alumni.name}
                       className="w-full h-full object-cover rounded-full bg-background"
+                      width={100}
+                      height={100}
                     />
                   </div>
-                  {/* Menggunakan `text-card-foreground` dari tema */}
                   <h3 className="text-xl font-bold text-card-foreground">
                     {alumni.name}
                   </h3>
@@ -217,7 +209,6 @@ const AlumniPage = () => {
 
                 <div className="p-6 border-t border-border space-y-4 flex-grow">
                   <div>
-                    {/* Menggunakan `bg-accent` dan `text-accent-foreground` dari tema */}
                     <span className="inline-block px-3 py-1 text-xs bg-accent text-accent-foreground rounded-full font-medium">
                       {alumni.department}
                     </span>

@@ -2,15 +2,7 @@ import type { Metadata } from "next";
 import "@/styles/globals.css";
 import { Lamphome } from "@/components/ui/(navbar)/lamphome";
 import { ThemeProvider } from "next-themes";
-import { Poppins } from "next/font/google";
 import { AuthProvider } from "@/app/context/AuthContext";
-
-const poppins = Poppins({
-  subsets: ["latin"],
-  weight: ["400", "500", "600", "700", "800"],
-  display: "swap",
-  variable: "--font-poppins",
-});
 
 export const metadata: Metadata = {
   title: "SMKN 2 SURABAYA",
@@ -23,7 +15,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="id" className={poppins.variable} suppressHydrationWarning>
+    <html lang="id" suppressHydrationWarning>
       <head>
         <link rel="preload" href="/img/smkn2.webp" as="image" />
       </head>

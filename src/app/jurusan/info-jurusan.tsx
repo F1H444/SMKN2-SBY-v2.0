@@ -188,7 +188,7 @@ export default function JurusanPage() {
                   <div>
                     <div className="relative z-10">
                       <div
-                        className={`w-12 h-12 rounded-lg flex items-center justify-center bg-gradient-to-br ${item.color} shadow-lg group-hover:scale-110 transition-transform`}
+                        className={`w-12 h-12 rounded-lg flex items-center justify-center bg-linear-to-br ${item.color} shadow-lg group-hover:scale-110 transition-transform`}
                       >
                         <IconComponent className="w-6 h-6 text-white" />
                       </div>
@@ -210,7 +210,7 @@ export default function JurusanPage() {
                     </div>
                   </div>
                   <div
-                    className={`absolute -bottom-10 -right-10 w-28 h-28 bg-gradient-to-br ${item.color} rounded-full opacity-10 transition-all duration-500 ease-in-out group-hover:opacity-20 group-hover:scale-150`}
+                    className={`absolute -bottom-10 -right-10 w-28 h-28 bg-linear-to-br ${item.color} rounded-full opacity-10 transition-all duration-500 ease-in-out group-hover:opacity-20 group-hover:scale-150`}
                   ></div>
                 </Link>
               </div>

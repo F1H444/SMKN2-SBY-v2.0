@@ -2,141 +2,139 @@
 
 import { useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
-import {
-  Image,
-  Code,
-  Cpu,
-  Wrench,
-  Video,
-  Building,
-  Bike,
-  Home,
-  CircuitBoard,
-  Zap,
-  ArrowRight,
-} from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import Link from "next/link";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 
 gsap.registerPlugin(ScrollTrigger);
 
+// Daftar Eskul disesuaikan berdasarkan list pada gambar
 const eskulData = [
-  {
-    id: "ambalan",
-    title: "Ambalan (Pramuka)",
-    description:
-      "Kegiatan kepramukaan yang mengajarkan kepemimpinan, kemandirian, dan keterampilan survival di alam terbuka.",
-    icon: Home,
-    color: "from-green-500 to-emerald-500",
-  },
-  {
-    id: "badminton",
-    title: "Badminton",
-    description:
-      "Olahraga bulu tangkis untuk mengasah ketangkasan, kecepatan, dan strategi permainan kompetitif.",
-    icon: Zap,
-    color: "from-yellow-500 to-orange-500",
-  },
-  {
-    id: "band",
-    title: "Band",
-    description:
-      "Wadah bermusik bersama untuk mengekspresikan kreativitas melalui harmonisasi alat musik modern.",
-    icon: Video,
-    color: "from-purple-500 to-pink-500",
-  },
   {
     id: "basket",
     title: "Basket",
     description:
       "Olahraga basket yang melatih kerja sama tim, strategi, dan kemampuan fisik melalui permainan dinamis.",
-    icon: CircuitBoard,
+    emoji: "🏀",
     color: "from-orange-500 to-red-500",
-  },
-  {
-    id: "dance",
-    title: "Dance (Tari)",
-    description:
-      "Seni tari yang mengembangkan ekspresi, kreativitas, dan kepercayaan diri melalui gerakan koreografi.",
-    icon: Image,
-    color: "from-pink-500 to-rose-500",
   },
   {
     id: "futsal",
     title: "Futsal",
     description:
       "Olahraga futsal yang melatih kecepatan, teknik, dan koordinasi tim dalam permainan sepak bola indoor.",
-    icon: Bike,
+    emoji: "⚽",
     color: "from-blue-500 to-cyan-500",
   },
   {
-    id: "jurnalis",
-    title: "Jurnalis",
+    id: "badminton",
+    title: "Badminton",
     description:
-      "Kegiatan jurnalistik yang melatih kemampuan menulis, meliput berita, dan menyebarkan informasi.",
-    icon: Code,
-    color: "from-slate-500 to-gray-600",
+      "Olahraga bulu tangkis untuk mengasah ketangkasan, kecepatan, dan strategi permainan kompetitif.",
+    emoji: "🏸",
+    color: "from-yellow-500 to-orange-500",
+  },
+  {
+    id: "perisai-diri",
+    title: "Perisai Diri", // Dianggap sebagai Seni Bela Diri/Pencak Silat
+    description:
+      "Seni bela diri Perisai Diri yang melatih pertahanan diri, kedisiplinan, dan kekuatan mental serta fisik.",
+    emoji: "🥋",
+    color: "from-amber-500 to-orange-600",
+  },
+  {
+    id: "volly",
+    title: "Volly",
+    description:
+      "Olahraga bola voli yang melatih koordinasi, refleks, dan kekompakan tim dalam permainan.",
+    emoji: "🏐",
+    color: "from-teal-500 to-cyan-500",
+  },
+  {
+    id: "dance",
+    title: "Dance (Modern/Koreografi)", // Mengganti 'Dance' menjadi konteks yang lebih spesifik
+    description:
+      "Seni tari modern yang mengembangkan ekspresi, kreativitas, dan kepercayaan diri melalui gerakan koreografi.",
+    emoji: "💃",
+    color: "from-pink-500 to-rose-500",
   },
   {
     id: "paskibra",
     title: "Paskibra",
     description:
       "Pasukan Pengibar Bendera yang melatih kedisiplinan, keberanian, dan jiwa patriotisme.",
-    icon: Wrench,
+    emoji: "🚩",
     color: "from-red-500 to-rose-600",
   },
   {
-    id: "sbl",
-    title: "SBL (Seni Bela Diri)",
+    id: "elite-robotik",
+    title: "ELITE (Robotik)",
     description:
-      "Seni bela diri yang melatih pertahanan diri, disiplin, dan kekuatan mental serta fisik.",
-    icon: Zap,
-    color: "from-amber-500 to-orange-600",
+      "Kegiatan robotik yang mengembangkan keterampilan dalam pemrograman, elektronika, dan perancangan mekanik.",
+    emoji: "🤖",
+    color: "from-indigo-500 to-violet-500",
   },
   {
-    id: "ski",
-    title: "SKI (Seni Karawitan)",
+    id: "band",
+    title: "Band",
     description:
-      "Seni musik tradisional Jawa yang melestarikan budaya melalui gamelan dan vokal.",
-    icon: Building,
-    color: "from-yellow-500 to-lime-500",
+      "Wadah bermusik bersama untuk mengekspresikan kreativitas melalui harmonisasi alat musik modern.",
+    emoji: "🎸",
+    color: "from-purple-500 to-pink-500",
   },
   {
-    id: "skk",
-    title: "SKK (Seni Kriya Kayu)",
+    id: "pramuka",
+    title: "Pramuka",
     description:
-      "Seni kerajinan kayu yang mengasah kreativitas dalam menciptakan produk berbahan dasar kayu.",
-    icon: Wrench,
-    color: "from-stone-500 to-neutral-500",
+      "Kegiatan kepramukaan yang mengajarkan kepemimpinan, kemandirian, dan keterampilan survival di alam terbuka.",
+    emoji: "⛺",
+    color: "from-green-500 to-emerald-500",
   },
   {
     id: "tari",
-    title: "Tari Tradisional",
+    title: "Tari (Tradisional)", // Mengganti 'Tari' menjadi konteks yang lebih spesifik
     description:
       "Pelestarian tari tradisional Indonesia yang kaya akan nilai budaya dan filosofi nusantara.",
-    icon: Image,
+    emoji: "🎭",
     color: "from-fuchsia-500 to-violet-500",
   },
   {
-    id: "voli",
-    title: "Voli",
+    id: "jurnalistik",
+    title: "Jurnalistik",
     description:
-      "Olahraga bola voli yang melatih koordinasi, refleks, dan kekompakan tim dalam permainan.",
-    icon: Cpu,
-    color: "from-teal-500 to-cyan-500",
+      "Kegiatan jurnalistik yang melatih kemampuan menulis, meliput berita, dan menyebarkan informasi.",
+    emoji: "📰",
+    color: "from-slate-500 to-gray-600",
+  },
+  {
+    id: "esport",
+    title: "Esport",
+    description:
+      "Wadah bagi gamer kompetitif untuk melatih strategi, kerja sama tim, dan fokus dalam turnamen game.",
+    emoji: "🎮",
+    color: "from-red-600 to-gray-800",
+  },
+  {
+    id: "sbl",
+    title: "SBL (Sekolah Berwawasan Lingkungan)",
+    description:
+      "Kegiatan yang berfokus pada kesadaran lingkungan, konservasi, dan proyek-proyek hijau di sekolah.",
+    emoji: "🌳",
+    color: "from-lime-500 to-green-600",
   },
 ];
 
 export default function EskulPage() {
   const main = useRef<HTMLDivElement>(null);
-  const [dataEkskul, setDataEkskul] = useState([]);
+  const [dataEkskul, setDataEkskul] = useState([]); // Variabel ini sekarang tidak digunakan untuk data, tapi dipertahankan jika ada kebutuhan API di masa depan
 
   useEffect(() => {
-    fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/majors`)
-      .then((res) => res.json())
-      .then((result) => setDataEkskul(result.items))
-      .catch(console.error);
+    // Mematikan fetch API yang tidak perlu jika menggunakan data lokal
+    // fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/majors`)
+    //   .then((res) => res.json())
+    //   .then((result) => setDataEkskul(result.items))
+    //   .catch(console.error);
 
     const ctx = gsap.context(() => {
       // Animasi scroll trigger untuk cards
@@ -195,7 +193,6 @@ export default function EskulPage() {
         card.addEventListener("mousemove", handleMouseMove);
         card.addEventListener("mouseleave", handleMouseLeave);
 
-        // Simpan reference untuk cleanup
         listeners.push({
           element: card,
           moveHandler: handleMouseMove,
@@ -203,7 +200,6 @@ export default function EskulPage() {
         });
       });
 
-      // Cleanup event listeners
       return () => {
         listeners.forEach(({ element, moveHandler, leaveHandler }) => {
           element.removeEventListener("mousemove", moveHandler);
@@ -215,9 +211,10 @@ export default function EskulPage() {
     return () => ctx.revert();
   }, []);
 
-  if (dataEkskul) {
-    console.log(dataEkskul)
-  } else console.log("eskul data still kosong")
+  // Logika log dihapus karena dataEkskul tidak diisi dari fetch
+  // if (dataEkskul) {
+  //   console.log(dataEkskul);
+  // } else console.log("eskul data still kosong");
 
   return (
     <div
@@ -252,9 +249,9 @@ export default function EskulPage() {
                 <div>
                   <div className="relative z-10">
                     <div
-                      className={`w-12 h-12 rounded-lg flex items-center justify-center bg-gradient-to-br ${item.color}`}
+                      className={`w-12 h-12 rounded-lg flex items-center justify-center bg-linear-to-br ${item.color}`}
                     >
-                      <item.icon className="w-6 h-6 text-white" />
+                      <span className="text-2xl">{item.emoji}</span>
                     </div>
                     <h3 className="mt-4 text-xl font-bold text-slate-900 dark:text-gray-100">
                       {item.title}
@@ -276,7 +273,7 @@ export default function EskulPage() {
                 </div>
 
                 <div
-                  className={`absolute -bottom-10 -right-10 w-28 h-28 bg-gradient-to-br ${item.color} rounded-full opacity-10 transition-all duration-500 ease-in-out group-hover:opacity-20 group-hover:scale-150`}
+                  className={`absolute -bottom-10 -right-10 w-28 h-28 bg-linear-to-br ${item.color} rounded-full opacity-10 transition-all duration-500 ease-in-out group-hover:opacity-20 group-hover:scale-150`}
                 ></div>
               </Link>
             </div>

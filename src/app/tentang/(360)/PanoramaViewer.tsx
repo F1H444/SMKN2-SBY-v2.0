@@ -1,14 +1,12 @@
 "use client";
 import React, { useState, useRef, useEffect, useCallback } from "react";
-import Image from "next/image"; // FIX: Import next/image
+import Image from "next/image";
 
-// Define the shape of an image object for type safety
 interface PanoramaImage {
   url: string;
   title: string;
 }
 
-// Define the props for the component
 interface PanoramaViewerProps {
   images: PanoramaImage[];
 }
@@ -18,8 +16,8 @@ function PanoramaViewer({ images }: PanoramaViewerProps) {
   const [isDragging, setIsDragging] = useState(false);
   const [isAutoRotate, setIsAutoRotate] = useState(true);
   const [showHint, setShowHint] = useState(true);
+  const [imageLoaded, setImageLoaded] = useState(false);
 
-  // Use refs for values that change frequently to avoid re-renders
   const containerRef = useRef<HTMLDivElement>(null);
   const imageContainerRef = useRef<HTMLDivElement>(null);
   const positionRef = useRef(0);
@@ -28,15 +26,21 @@ function PanoramaViewer({ images }: PanoramaViewerProps) {
   const imageWidthRef = useRef(0);
   const animationFrameRef = useRef<number | null>(null);
 
+  // ADDED: Max velocity limit untuk mencegah putaran terlalu cepat
+  const MAX_VELOCITY = 30;
+  const FRICTION = 0.92; // Lebih tinggi = lebih cepat berhenti
+
   const currentImage = images[currentImageIndex];
 
-  // Effect to hide the initial hint
   useEffect(() => {
-    const timer = setTimeout(() => setShowHint(false), 3000);
+    const timer = setTimeout(() => setShowHint(false), 4000);
     return () => clearTimeout(timer);
   }, []);
 
-  // FIX: Logic adjusted to calculate image width based on container height and aspect ratio
+  useEffect(() => {
+    setImageLoaded(false);
+  }, [currentImageIndex]);
+
   useEffect(() => {
     let isMounted = true;
 
@@ -52,7 +56,6 @@ function PanoramaViewer({ images }: PanoramaViewerProps) {
 
       imageWidthRef.current = calculatedWidth;
 
-      // Apply width to wrapper divs
       if (imageContainerRef.current) {
         const children = imageContainerRef.current.children;
         for (let i = 0; i < children.length; i++) {
@@ -65,6 +68,7 @@ function PanoramaViewer({ images }: PanoramaViewerProps) {
     img.src = currentImage.url;
     img.onload = () => {
       updateImageDimensions(img.naturalWidth, img.naturalHeight);
+      setImageLoaded(true);
     };
 
     const handleResize = () => {
@@ -80,22 +84,26 @@ function PanoramaViewer({ images }: PanoramaViewerProps) {
     };
   }, [currentImage.url]);
 
-  // Main animation loop using requestAnimationFrame
   const animationLoop = useCallback(() => {
     if (imageWidthRef.current <= 0) {
       animationFrameRef.current = requestAnimationFrame(animationLoop);
       return;
     }
 
-    // Apply movement
     if (isAutoRotate && !isDragging) {
-      positionRef.current -= 0.5; // Auto-rotate speed
+      positionRef.current -= 0.5;
     } else if (!isDragging && Math.abs(velocityRef.current) > 0.1) {
-      velocityRef.current *= 0.95; // Friction for momentum
+      // UPDATED: Friction lebih kuat dan velocity limit
+      velocityRef.current *= FRICTION;
+
+      // Clamp velocity agar tidak terlalu cepat
+      if (Math.abs(velocityRef.current) > MAX_VELOCITY) {
+        velocityRef.current = Math.sign(velocityRef.current) * MAX_VELOCITY;
+      }
+
       positionRef.current += velocityRef.current;
     }
 
-    // *** FIX: Ensure seamless wrapping in both directions ***
     if (positionRef.current < -imageWidthRef.current) {
       positionRef.current += imageWidthRef.current;
     } else if (positionRef.current > 0) {
@@ -118,7 +126,6 @@ function PanoramaViewer({ images }: PanoramaViewerProps) {
     };
   }, [animationLoop]);
 
-  // Handlers for starting, moving, and ending a drag
   const handleDragStart = useCallback((clientX: number) => {
     setIsDragging(true);
     setIsAutoRotate(false);
@@ -132,7 +139,16 @@ function PanoramaViewer({ images }: PanoramaViewerProps) {
     (clientX: number) => {
       if (!isDragging) return;
       const newPosition = clientX - startXRef.current;
-      velocityRef.current = newPosition - positionRef.current;
+
+      // UPDATED: Limit velocity calculation
+      let calculatedVelocity = newPosition - positionRef.current;
+
+      // Clamp velocity saat drag
+      if (Math.abs(calculatedVelocity) > MAX_VELOCITY) {
+        calculatedVelocity = Math.sign(calculatedVelocity) * MAX_VELOCITY;
+      }
+
+      velocityRef.current = calculatedVelocity;
       positionRef.current = newPosition;
     },
     [isDragging]
@@ -140,10 +156,13 @@ function PanoramaViewer({ images }: PanoramaViewerProps) {
 
   const handleDragEnd = useCallback(() => {
     setIsDragging(false);
+
+    // ADDED: Reduce velocity saat release untuk efek lebih smooth
+    velocityRef.current *= 0.7;
+
     if (containerRef.current) containerRef.current.style.cursor = "grab";
   }, []);
 
-  // Add and remove global event listeners for smooth dragging
   useEffect(() => {
     const handleMove = (e: MouseEvent) => handleDragMove(e.clientX);
     const handleTouchMove = (e: TouchEvent) =>
@@ -164,7 +183,6 @@ function PanoramaViewer({ images }: PanoramaViewerProps) {
     };
   }, [isDragging, handleDragMove, handleDragEnd]);
 
-  // Keyboard controls
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       setIsAutoRotate(false);
@@ -180,7 +198,6 @@ function PanoramaViewer({ images }: PanoramaViewerProps) {
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, []);
 
-  // UI action handlers
   const toggleAutoRotate = () => setIsAutoRotate(!isAutoRotate);
 
   const resetView = () => {
@@ -208,46 +225,57 @@ function PanoramaViewer({ images }: PanoramaViewerProps) {
           onMouseDown={(e) => handleDragStart(e.clientX)}
           onTouchStart={(e) => handleDragStart(e.touches[0].clientX)}
         >
+          {/* Loading Indicator */}
+          {!imageLoaded && (
+            <div className="absolute inset-0 flex items-center justify-center z-30 bg-gray-900">
+              <div className="text-center">
+                <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-blue-500 mx-auto mb-4"></div>
+                <p className="text-white text-lg">Memuat gambar HD...</p>
+              </div>
+            </div>
+          )}
+
           {/* Image container for seamless loop */}
           <div
             ref={imageContainerRef}
             className="absolute top-0 left-0 h-full flex"
             style={{ willChange: "transform" }}
           >
-            {/* FIX: Replaced <img> with next/Image inside a sized container */}
             {[0, 1].map((i) => (
               <div key={i} className="relative h-full flex-shrink-0">
                 <Image
                   src={currentImage.url}
-                  alt="Panorama 360"
+                  alt={`${currentImage.title} - Panorama 360°`}
                   fill
                   priority={i === 0}
+                  quality={100}
                   draggable={false}
+                  unoptimized={false}
+                  sizes="(max-width: 768px) 200vw, 300vw"
                   className="pointer-events-none"
-                  style={{ objectFit: "cover" }}
+                  style={{
+                    objectFit: "cover",
+                    // UPDATED: Menggunakan nilai standar "auto"
+                    imageRendering: "auto",
+                  }}
+                  onLoadingComplete={() => {
+                    if (i === 0) setImageLoaded(true);
+                  }}
                 />
               </div>
             ))}
           </div>
 
-          {/* UI Overlays: Hint, Controls, etc. */}
-          {showHint && (
-            <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-10">
-              <div className="bg-black/70 backdrop-blur-md px-8 py-4 rounded-2xl flex items-center gap-3 animate-bounce">
-                <span className="text-white font-semibold text-lg">
-                  🖱️ Geser untuk menjelajah 360° 📱
-                </span>
-              </div>
-            </div>
-          )}
+          {/* UPDATED: Hint dengan instruksi lebih jelas */}
 
-          {/* Left/Right Buttons */}
+          {/* UPDATED: Tombol L/R dengan label yang lebih jelas - UNTUK ROTASI */}
           <button
             onClick={() => {
               setIsAutoRotate(false);
               positionRef.current += 100;
             }}
-            className="absolute left-4 top-1/2 -translate-y-1/2 p-4 bg-white/10 hover:bg-white/20 backdrop-blur-md rounded-full shadow-xl hover:scale-110 transition-all duration-200 z-20"
+            className="absolute left-4 top-1/2 -translate-y-1/2 p-4 bg-gradient-to-r from-blue-500/20 to-blue-600/20 hover:from-blue-500/30 hover:to-blue-600/30 backdrop-blur-md rounded-full shadow-xl hover:scale-110 transition-all duration-200 z-20 border-2 border-blue-400/30"
+            aria-label="Putar kiri"
           >
             <svg
               className="w-6 h-6 md:w-8 md:h-8 text-white"
@@ -263,12 +291,14 @@ function PanoramaViewer({ images }: PanoramaViewerProps) {
               />
             </svg>
           </button>
+
           <button
             onClick={() => {
               setIsAutoRotate(false);
               positionRef.current -= 100;
             }}
-            className="absolute right-4 top-1/2 -translate-y-1/2 p-4 bg-white/10 hover:bg-white/20 backdrop-blur-md rounded-full shadow-xl hover:scale-110 transition-all duration-200 z-20"
+            className="absolute right-4 top-1/2 -translate-y-1/2 p-4 bg-gradient-to-r from-blue-600/20 to-blue-500/20 hover:from-blue-600/30 hover:to-blue-500/30 backdrop-blur-md rounded-full shadow-xl hover:scale-110 transition-all duration-200 z-20 border-2 border-blue-400/30"
+            aria-label="Putar kanan"
           >
             <svg
               className="w-6 h-6 md:w-8 md:h-8 text-white"
@@ -283,11 +313,11 @@ function PanoramaViewer({ images }: PanoramaViewerProps) {
                 d="M9 5l7 7-7 7"
               />
             </svg>
+            <div className="absolute -bottom-8 left-1/2 -translate-x-1/2 whitespace-nowrap"></div>
           </button>
 
-          {/* Simplified Top-Right Controls */}
+          {/* Top-Right Controls */}
           <div className="absolute top-4 right-4 flex gap-2 z-20">
-            {/* Auto-rotate Button (Mulai) */}
             <button
               onClick={toggleAutoRotate}
               className={`p-3 backdrop-blur-md rounded-full shadow-lg hover:scale-110 transition-all ${
@@ -295,6 +325,7 @@ function PanoramaViewer({ images }: PanoramaViewerProps) {
                   ? "bg-blue-500/90 text-white"
                   : "bg-white/90 text-gray-900"
               }`}
+              aria-label={isAutoRotate ? "Pause rotation" : "Start rotation"}
             >
               {isAutoRotate ? (
                 <svg
@@ -332,10 +363,10 @@ function PanoramaViewer({ images }: PanoramaViewerProps) {
                 </svg>
               )}
             </button>
-            {/* Reset Button (Ulang) */}
             <button
               onClick={resetView}
               className="p-3 bg-white/90 backdrop-blur-md rounded-full shadow-lg hover:scale-110 transition-all"
+              aria-label="Reset view"
             >
               <svg
                 className="w-5 h-5 text-gray-900"
@@ -362,47 +393,73 @@ function PanoramaViewer({ images }: PanoramaViewerProps) {
             </div>
           </div>
 
-          {/* Bottom Controls */}
-          <div className="absolute bottom-6 left-4 flex gap-2 z-20">
-            <button
-              onClick={prevImage}
-              className="p-3 bg-white/90 backdrop-blur-md rounded-full shadow-lg hover:scale-110 transition-all"
-              disabled={images.length <= 1}
-            >
-              <svg
-                className="w-5 h-5 text-gray-900"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
+          {/* UPDATED: Bottom Controls dengan style berbeda & label jelas - UNTUK GANTI RUANGAN */}
+          <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex items-center gap-3 z-20">
+            <div className="bg-gradient-to-r from-green-500/90 to-emerald-500/90 backdrop-blur-md px-6 py-3 rounded-full shadow-2xl flex items-center gap-3 border-2 border-white/20">
+              <button
+                onClick={prevImage}
+                className="p-2 bg-white/20 hover:bg-white/30 rounded-full transition-all hover:scale-110 disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:scale-100"
+                disabled={images.length <= 1}
+                aria-label="Ruangan sebelumnya"
               >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M15 19l-7-7 7-7"
-                />
-              </svg>
-            </button>
-            <button
-              onClick={nextImage}
-              className="p-3 bg-white/90 backdrop-blur-md rounded-full shadow-lg hover:scale-110 transition-all"
-              disabled={images.length <= 1}
-            >
-              <svg
-                className="w-5 h-5 text-gray-900"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
+                <svg
+                  className="w-5 h-5 text-white"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M15 19l-7-7 7-7"
+                  />
+                </svg>
+              </button>
+
+              <div className="flex items-center gap-2 px-2">
+                <svg
+                  className="w-5 h-5 text-white"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"
+                  />
+                </svg>
+                <span className="text-white font-bold text-sm whitespace-nowrap">
+                  GANTI RUANGAN
+                </span>
+              </div>
+
+              <button
+                onClick={nextImage}
+                className="p-2 bg-white/20 hover:bg-white/30 rounded-full transition-all hover:scale-110 disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:scale-100"
+                disabled={images.length <= 1}
+                aria-label="Ruangan selanjutnya"
               >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M9 5l7 7-7 7"
-                />
-              </svg>
-            </button>
+                <svg
+                  className="w-5 h-5 text-white"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M9 5l7 7-7 7"
+                  />
+                </svg>
+              </button>
+            </div>
           </div>
+
+          {/* Title Display */}
           <div className="absolute bottom-6 right-4 bg-black/70 backdrop-blur-md px-4 py-2 rounded-full shadow-lg z-20">
             <span className="text-white font-medium text-sm">
               {currentImage.title}

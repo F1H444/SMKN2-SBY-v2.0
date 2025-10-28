@@ -21,7 +21,7 @@ const alumniData = [
     role: "Atlet Bulu Tangkis Nasional",
     company: "PBSI",
     status: "Bekerja",
-    image: "https://api.dicebear.com/7.x/avataaars/svg?seed=Rian",
+    image: "/img/profil.jpg",
   },
   {
     id: 2,
@@ -29,7 +29,7 @@ const alumniData = [
     role: "Dosen dan Peneliti",
     company: "Institut Teknologi Sepuluh Nopember (ITS)",
     status: "Melanjutkan",
-    image: "https://api.dicebear.com/7.x/avataaars/svg?seed=Herman",
+    image: "/img/profil.jpg",
   },
   {
     id: 3,
@@ -37,7 +37,7 @@ const alumniData = [
     role: "Founder & Automotive Influencer",
     company: "Armuh Global Group",
     status: "Wirausaha",
-    image: "https://api.dicebear.com/7.x/avataaars/svg?seed=Arief",
+    image: "/img/profil.jpg",
   },
   {
     id: 4,
@@ -45,7 +45,7 @@ const alumniData = [
     role: "Content Creator & Sutradara Film",
     company: "Skak Studios",
     status: "Wirausaha",
-    image: "https://api.dicebear.com/7.x/avataaars/svg?seed=Bayu",
+    image: "/img/profil.jpg",
   },
   {
     id: 5,
@@ -53,7 +53,7 @@ const alumniData = [
     role: "Insinyur Senior",
     company: "PT. PAL Indonesia",
     status: "Bekerja",
-    image: "https://api.dicebear.com/7.x/avataaars/svg?seed=Agus",
+    image: "/img/profil.jpg",
   },
   {
     id: 6,
@@ -61,7 +61,7 @@ const alumniData = [
     role: "Mahasiswi Teknik Informatika",
     company: "Universitas Gadjah Mada (UGM)",
     status: "Melanjutkan",
-    image: "https://api.dicebear.com/7.x/avataaars/svg?seed=Dewi",
+    image: "/img/profil.jpg",
   },
   {
     id: 7,
@@ -69,7 +69,7 @@ const alumniData = [
     role: "Spesialis Robotika",
     company: "PT. Sri Rejeki Isman (Sritex)",
     status: "Bekerja",
-    image: "https://api.dicebear.com/7.x/avataaars/svg?seed=Eko",
+    image: "/img/profil.jpg",
   },
   {
     id: 8,
@@ -77,7 +77,7 @@ const alumniData = [
     role: "Founder Startup Edukasi",
     company: "KelasKita",
     status: "Wirausaha",
-    image: "https://api.dicebear.com/7.x/avataaars/svg?seed=Fahmi",
+    image: "/img/profil.jpg",
   },
   {
     id: 9,
@@ -85,7 +85,7 @@ const alumniData = [
     role: "Mahasiswi S2 Kimia",
     company: "Freie Universität Berlin",
     status: "Melanjutkan",
-    image: "https://api.dicebear.com/7.x/avataaars/svg?seed=GitaSavitri",
+    image: "/img/profil.jpg",
   },
   {
     id: 10,
@@ -93,7 +93,7 @@ const alumniData = [
     role: "Founder & CEO",
     company: "Baba Rafi Enterprise",
     status: "Wirausaha",
-    image: "https://api.dicebear.com/7.x/avataaars/svg?seed=Hendi",
+    image: "/img/profil.jpg",
   },
   {
     id: 11,
@@ -101,7 +101,7 @@ const alumniData = [
     role: "Animator Profesional",
     company: "MD Animation",
     status: "Bekerja",
-    image: "https://api.dicebear.com/7.x/avataaars/svg?seed=Indra",
+    image: "/img/profil.jpg",
   },
   {
     id: 12,
@@ -109,7 +109,7 @@ const alumniData = [
     role: "Sutradara & Penulis Skenario",
     company: "Come and See Pictures",
     status: "Wirausaha",
-    image: "https://api.dicebear.com/7.x/avataaars/svg?seed=JokoAnwar",
+    image: "/img/profil.jpg",
   },
 ];
 

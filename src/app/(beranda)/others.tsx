@@ -1,5 +1,3 @@
-// app/(home)/others.tsx (Full Code - Optimized)
-
 "use client";
 import { useState, useRef, useEffect, memo } from "react";
 import React from "react";
