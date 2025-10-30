@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
 import {
   Image as ImageIcon,
@@ -125,8 +125,19 @@ const jurusanData = [
 
 export default function JurusanPage() {
   const main = useRef<HTMLDivElement>(null);
+  const [majors, setMajors] = useState();
+
+  const fetchMajors = async () => {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/majors`);
+    const data = await res.json();
+    setMajors(data);
+  }
+
+  console.log(majors);
 
   useEffect(() => {
+    fetchMajors();
+
     const ctx = gsap.context(() => {
       gsap.fromTo(
         ".jurusan-card",
