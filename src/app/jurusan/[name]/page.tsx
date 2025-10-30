@@ -1,7 +1,13 @@
 "use client";
 
-import { useParams } from "next/navigation";
+// Impor hook dari React dan Next.js
+import React, { useState, memo, useEffect } from "react";
+import { useSearchParams } from "next/navigation";
+import Link from "next/link";
+import Image from "next/image";
 import { motion } from "framer-motion";
+
+// Impor ikon
 import {
   Code,
   Cpu,
@@ -17,282 +23,54 @@ import {
   CheckCircle2,
   Briefcase,
   GraduationCap,
-  Image as ImageIcon,
+  Image as ImageIcon, // Ganti nama agar tidak konflik dengan Next/Image
 } from "lucide-react";
-import Link from "next/link";
-import Image from "next/image";
-import React, { useState, memo, useEffect } from "react";
 
-// Data lengkap dan diperbarui dengan path gambar dan konten yang sesuai.
-const jurusanData = {
-  rpl: {
-    id: "rpl",
-    short: "RPL",
-    title: "Rekayasa Perangkat Lunak",
-    description:
-      "Mendalami cara pengembangan perangkat lunak secara sistematis dan profesional.",
-    icon: Code,
-    color: "from-blue-500 to-cyan-500",
-    image: "/img/detailjurusan/rpl.webp",
-    detailDescription:
-      "Program keahlian RPL mendidik siswa untuk menjadi pengembang perangkat lunak yang kompeten, mampu merancang, membangun, dan mengelola aplikasi web, mobile, dan desktop menggunakan teknologi terkini.",
-    kompetensi: [
-      "Pemrograman web",
-      "Pemrograman perangkat bergerak",
-      "Pemrograman berbasis objek",
-    ],
-    prospekKerja: [
-      "Software engineer/programmer",
-      "Mobile computing",
-      "IT Consultant",
-      "System analyst",
-      "Game developer",
-      "Software tester",
-    ],
-  },
-  tkj: {
-    id: "tkj",
-    short: "TKJ",
-    title: "Teknik Komputer dan Jaringan",
-    description:
-      "Mempelajari cara merakit komputer dan menginstal program komputer.",
-    icon: Cpu,
-    color: "from-green-500 to-emerald-500",
-    image: "/img/detailjurusan/tkj.webp",
-    detailDescription:
-      "Siswa TKJ dipersiapkan untuk menjadi ahli di bidang infrastruktur teknologi informasi, mulai dari perakitan, instalasi, hingga administrasi jaringan dan server yang kompleks.",
-    kompetensi: [
-      "Administrasi infrastruktur Jaringan",
-      "Praktikum Routing Dinamis dengan protokol OSPF",
-      "Konfigurasi Routing dinamis dengan Protokol RIP",
-    ],
-    prospekKerja: [
-      "Teknisi",
-      "Marketer / Sales",
-      "PNS",
-      "Desainer",
-      "Programmer",
-      "System Analyst",
-      "Network Administrator",
-      "Game Developer",
-    ],
-  },
-  tpm: {
-    id: "tpm",
-    short: "TPM",
-    title: "Teknik Pemesinan",
-    description: "Mempersiapkan tenaga kerja terampil di bidang pemesinan.",
-    icon: Wrench,
-    color: "from-slate-500 to-gray-600",
-    image: "/img/detailjurusan/tpm.webp",
-    detailDescription:
-      "Jurusan ini fokus pada pembentukan tenaga ahli yang mahir dalam mengoperasikan mesin produksi presisi, baik manual maupun berbasis komputer (CNC), untuk menciptakan komponen industri.",
-    kompetensi: [
-      "Mengoperasikan mesin produksi manual maupun CNC (Computer Numerical Control)",
-    ],
-    prospekKerja: [
-      "Bekerja di Industri Otomotif",
-      "Bekerja bagian Konveksi energi",
-      "Bekerja pada industri Bioteknologi",
-      "Bergabung dengan PJB (Pembangkit Jawa Bali)",
-      "Bekerja pada Industri pertambangan",
-      "Drafter",
-    ],
-  },
-  tkr: {
-    id: "tkr",
-    short: "TKR",
-    title: "Teknik Kendaraan Ringan",
-    description:
-      "Menekankan keahlian pada penguasaan jasa perbaikan kendaraan ringan.",
-    icon: Car,
-    color: "from-red-500 to-rose-500",
-    image: "/img/detailjurusan/tkr.webp",
-    detailDescription:
-      "Program ini dirancang untuk menghasilkan mekanik dan teknisi handal yang mampu melakukan diagnosa, perawatan, dan perbaikan pada sistem-sistem kompleks kendaraan roda empat modern.",
-    kompetensi: [
-      "Memahami dasar - dasar mesin",
-      "Sampai memperbaiki, menerapkan, memelihara komponen sistem kerja mesin",
-    ],
-    prospekKerja: [
-      "Industri Otomotif",
-      "Mekanik",
-      "Operator alat berat",
-      "Wirausaha",
-      "Sektor swasta dll",
-    ],
-  },
-  tkp: {
-    id: "tkp",
-    short: "TKP",
-    title: "Teknik Konstruksi & Perumahan",
-    description: "Mempelajari ilmu tentang konstruksi bangunan dan furniture.",
-    icon: Home,
-    color: "from-stone-500 to-neutral-500",
-    image: "/img/detailjurusan/tkp.webp",
-    detailDescription:
-      "Siswa dididik untuk menguasai berbagai aspek dalam dunia konstruksi, mulai dari perencanaan, pengukuran, pelaksanaan, hingga pengawasan proyek bangunan dan properti.",
-    kompetensi: [
-      "Gambar manual dan mekanika teknik",
-      "Teknik pengukuran tanah dan dasar-dasar konstruksi bangunan",
-      "Perencanaan, pelaksanaan serta pengawasan",
-      "Bisnis Konstruksi dan Properti",
-      "Estimasi biaya, pengelolaan konstruksi & properti",
-      "Produk kreatif & kewirausahaan",
-    ],
-    prospekKerja: [
-      "Drafter",
-      "Quantity Surveyor",
-      "Quality Control",
-      "Pelaksana lapangan",
-      "Logistik",
-      "Konstruksi perencana",
-      "Pengendali proyek",
-      "Kontraktor/Pemborong",
-    ],
-  },
-  titl: {
-    id: "titl",
-    short: "TITL",
-    title: "Teknik Instalasi Tenaga Listrik",
-    description:
-      "Mendidik keahlian dalam perencanaan dan pemasangan instalasi penerangan.",
-    icon: Zap,
-    color: "from-sky-500 to-indigo-500",
-    image: "/img/detailjurusan/titl.webp",
-    detailDescription:
-      "Program ini mempersiapkan teknisi ahli di bidang ketenagalistrikan, mulai dari instalasi skala rumah tangga hingga sistem yang lebih kompleks seperti panel surya dan PLC.",
-    kompetensi: [
-      "Praktik Instalasi penerangan listrik",
-      "Merakit panel Surya",
-      "PLC (Programable logic Controller)",
-      "Merawat dan memperbaiki alat rumah dll",
-    ],
-    prospekKerja: [
-      "Bekerja di bidang pembangkitan, transmisi, distribusi, dan juga pemanfaatan tenaga listrik sebagai peneliti, perancang, insinyur operasi, dan juga pemeliharaan sistem dan peralatan tenaga listrik di instansi pemerintahan dan berbagai industri ketenagalistrikan.",
-    ],
-  },
-  tav: {
-    id: "tav",
-    short: "TAV",
-    title: "Teknik Audio Video",
-    description:
-      "Jurusan dalam bidang elektronika, khususnya pengolahan sistem audio dan video.",
-    icon: Video,
-    color: "from-fuchsia-500 to-pink-500",
-    image: "/img/detailjurusan/tav.webp",
-    detailDescription:
-      "Siswa dibekali keterampilan untuk menjadi teknisi ahli dalam instalasi, perbaikan, dan pemeliharaan berbagai perangkat audio dan video, serta menerapkan standar keselamatan kerja (K3).",
-    kompetensi: [
-      "Menerapkan dasar-dasar Kelistrikan, Elektronika dan Teknik Digital",
-      "Menerapkan keselamatan, kesehatan kerja (K3)",
-    ],
-    prospekKerja: [
-      "Teknisi instalasi audio Vidio",
-      "Sound Enginner",
-      "Wirausaha",
-      "Sektor swasta",
-    ],
-  },
-  tei: {
-    // ID SUDAH KONSISTEN
-    id: "tei",
-    short: "TEI",
-    title: "Teknik Elektronika Industri",
-    description:
-      "Mendidik siswa agar mempunyai kemampuan di bidang sistem kontrol dan maintenance.",
-    icon: CircuitBoard,
-    color: "from-teal-500 to-cyan-500",
-    image: "/img/detailjurusan/tei.webp",
-    detailDescription:
-      "Fokus jurusan ini adalah pada sistem kontrol dan pemeliharaan peralatan industri berbasis 'electrical control' dan 'micro processor' yang erat kaitannya dengan proses produksi.",
-    kompetensi: [
-      "Pengetahuan dan keterampilan elektronika umum, mikrokontroller dan mikroprocessor, pneumatic dan PLC, programming berbasis komputer yang erat kaitannya dengan proses produksi di industri.",
-    ],
-    prospekKerja: [
-      "Teknisi industri",
-      "Sound Enginner",
-      "Wirausaha",
-      "Sektor swasta",
-    ],
-  },
-  animasi: {
-    id: "animasi",
-    short: "ANI",
-    title: "Animasi",
-    description:
-      "Mempelajari teori dan teknik dalam membuat animasi 2D, 3D, film, dan game.",
-    icon: ImageIcon,
-    color: "from-purple-500 to-violet-500",
-    image: "/img/detailjurusan/ani.webp",
-    detailDescription:
-      "Jurusan Animasi, yang berdiri sejak 2005, membekali siswa dengan keterampilan kreatif dan teknis untuk menghasilkan konten visual bergerak untuk berbagai platform.",
-    kompetensi: [
-      "3D (Dimensi) Modelling",
-      "Illustration",
-      "Storyboard artist",
-      "Animate 2D dan 3D",
-    ],
-    prospekKerja: [
-      "Animator",
-      "Ilustrator",
-      "Storyboard Artist",
-      "Desain Karakter",
-      "Desainer Grafis",
-      "Konten Kreator",
-    ],
-  },
-  dpib: {
-    id: "dpib",
-    short: "DPIB",
-    title: "Desain Pemodelan & Info Bangunan",
-    description:
-      "Mempelajari perancangan bangunan, pemodelan 3D, dan manajemen BIM.",
-    icon: Building,
-    color: "from-yellow-500 to-lime-500",
-    image: "/img/detailjurusan/dpib.webp", // Gambar default
-    detailDescription:
-      "Program keahlian DPIB mempersiapkan siswa menjadi drafter dan desainer bangunan yang mampu membuat gambar teknik dan model 3D menggunakan teknologi BIM.",
-    kompetensi: [
-      "AutoCAD 2D dan 3D",
-      "Building Information Modeling (BIM)",
-      "SketchUp dan 3D Rendering",
-      "RAB (Rencana Anggaran Biaya)",
-    ],
-    prospekKerja: [
-      "Drafter Arsitektur",
-      "BIM Modeler",
-      "Surveyor",
-      "Quantity Surveyor",
-      "Estimator Biaya",
-    ],
-  },
-  tsm: {
-    id: "tsm",
-    short: "TSM",
-    title: "Teknik Sepeda Motor",
-    description:
-      "Spesialisasi dalam perawatan, perbaikan, dan modifikasi sepeda motor.",
-    icon: Bike,
-    color: "from-orange-500 to-amber-500",
-    image: "/img/detailjurusan/default.webp", // Gambar default
-    detailDescription:
-      "Program keahlian Teknik Sepeda Motor mempersiapkan siswa menjadi mekanik profesional yang ahli dalam perawatan, perbaikan, dan modifikasi sepeda motor modern.",
-    kompetensi: [
-      "Sistem Kelistrikan Sepeda Motor",
-      "Engine Overhaul dan Tune-Up",
-      "Sistem Injeksi Bahan Bakar (EFI)",
-      "Diagnosa Kerusakan",
-    ],
-    prospekKerja: [
-      "Mekanik Sepeda Motor",
-      "Service Advisor",
-      "Workshop Supervisor",
-      "Wirausaha Bengkel Motor",
-    ],
-  },
+// Tipe data untuk respons API
+interface ApiMajor {
+  MajorID: number;
+  MajorName: string;
+  MajorLead: string;
+  MajorDesc: string;
+  MajorMaterials: string; // "Pemrograman, Basis Data, ..."
+  MajorProspect: string; // "Programmer, Web Developer, ..."
+  CreatedAt: string;
+  Alumnis: null;
+  Users: null;
+}
+
+// Tipe data untuk data yang digabungkan
+interface Jurusan {
+  id: number;
+  title: string;
+  description: string;
+  detailDescription: string;
+  kompetensi: string[];
+  prospekKerja: string[];
+  icon: React.ElementType;
+  color: string;
+  short: string;
+  image: string;
+}
+
+// Data visual lokal untuk digabungkan dengan API
+// Anda HARUS menyesuaikan path gambar (image) sesuai struktur folder Anda
+const majorVisuals = {
+  1: { icon: Code, color: "from-blue-500 to-sky-400", short: "RPL", image: "/images/jurusan/rpl.jpg" },
+  2: { icon: Cpu, color: "from-red-500 to-orange-400", short: "TKJ", image: "/images/jurusan/tkj.jpg" },
+  3: { icon: Wrench, color: "from-gray-600 to-gray-500", short: "TP", image: "/images/jurusan/mesin.jpg" },
+  4: { icon: Bike, color: "from-green-500 to-lime-400", short: "TSM", image: "/images/jurusan/tsm.jpg" },
+  5: { icon: Car, color: "from-yellow-500 to-amber-400", short: "TKR", image: "/images/jurusan/tkr.jpg" },
+  6: { icon: Building, color: "from-indigo-500 to-purple-400", short: "DPIB", image: "/images/jurusan/dpib.jpg" },
+  7: { icon: Home, color: "from-cyan-500 to-teal-400", short: "TKP", image: "/images/jurusan/tkp.jpg" },
+  8: { icon: ImageIcon, color: "from-pink-500 to-rose-400", short: "ANM", image: "/images/jurusan/animasi.jpg" },
+  9: { icon: CircuitBoard, color: "from-emerald-500 to-green-400", short: "TEI", image: "/images/jurusan/tei.jpg" },
+  10: { icon: Video, color: "from-violet-500 to-fuchsia-400", short: "TAV", image: "/images/jurusan/tav.jpg" },
+  11: { icon: Zap, color: "from-amber-500 to-orange-400", short: "TITL", image: "/images/jurusan/listrik.jpg" },
 };
+type MajorVisualsKey = keyof typeof majorVisuals;
 
+// Komponen List (tidak berubah)
 const ListItem = memo(
   ({ icon: Icon, text }: { icon: React.ElementType; text: string }) => (
     <li className="flex items-start gap-3">
@@ -313,38 +91,96 @@ const ProspekListItem = memo(
 );
 ProspekListItem.displayName = "ProspekListItem";
 
-export default async function JurusanDetailPage({
-  searchParams
-}: {
-  searchParams: Promise<{id: string}>
-}) {
-  const {id} = await searchParams;
-  const [major, setMajor] = useState();
+// Komponen Halaman Utama
+export default function JurusanDetailPage() {
+  const searchParams = useSearchParams();
+  const id = searchParams.get("id"); // Mengambil 'id' dari query URL
 
-  const fetchMajor = async () => {
-    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/majors/${id}`);
-    const data = await res.json();
-    setMajor(data);
-  }
-
-  useEffect(() => {
-    fetchMajor();
-  });
-
-
-  const jurusan = jurusanData[id as keyof typeof jurusanData];
-
+  const [major, setMajor] = useState<Jurusan | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
   const [isImageLoaded, setIsImageLoaded] = useState(false);
 
-  if (!jurusan) {
+  useEffect(() => {
+    // Hanya jalankan jika 'id' ada
+    if (!id) {
+      setIsLoading(false);
+      return;
+    }
+
+    const fetchMajor = async () => {
+      setIsLoading(true);
+      try {
+        // Ganti URL ini dengan URL API Anda yang sebenarnya
+        // Saya asumsikan /api/majors adalah endpoint yang mengembalikan array
+        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/majors`);
+        
+        if (!res.ok) {
+          throw new Error("Gagal mengambil data jurusan");
+        }
+
+        const data: ApiMajor[] = await res.json();
+
+        // Cari jurusan yang sesuai berdasarkan ID
+        const apiData = data.find(m => m.MajorID.toString() === id);
+
+        if (apiData) {
+          // Ambil data visual yang sesuai
+          const visualData = majorVisuals[apiData.MajorID as MajorVisualsKey];
+
+          if (visualData) {
+            // Gabungkan data dari API dan data visual lokal
+            const combinedData: Jurusan = {
+              id: apiData.MajorID,
+              title: apiData.MajorName,
+              description: apiData.MajorDesc,
+              detailDescription: apiData.MajorDesc, // Menggunakan deskripsi yang sama
+              kompetensi: apiData.MajorMaterials.split(',').map(s => s.trim()),
+              prospekKerja: apiData.MajorProspect.split(',').map(s => s.trim()),
+              ...visualData,
+            };
+            setMajor(combinedData);
+          } else {
+            console.error("Data visual tidak ditemukan untuk ID:", apiData.MajorID);
+            setMajor(null);
+          }
+        } else {
+          // Jurusan dengan ID tersebut tidak ditemukan di API
+          setMajor(null);
+        }
+      } catch (error) {
+        console.error("Error fetching major:", error);
+        setMajor(null);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchMajor();
+  }, [id]); // Jalankan ulang effect jika 'id' berubah
+
+  // Tampilan Loading
+  if (isLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center p-8">
+      <div className="min-h-screen flex items-center justify-center p-8 bg-white dark:bg-gray-950">
+        <div className="text-center">
+          <h1 className="text-2xl font-semibold text-slate-900 dark:text-white">
+            Memuat data jurusan...
+          </h1>
+        </div>
+      </div>
+    );
+  }
+
+  // Tampilan Jurusan Tidak Ditemukan
+  if (!major) {
+    return (
+      <div className="min-h-screen flex items-center justify-center p-8 bg-white dark:bg-gray-950">
         <div className="text-center">
           <h1 className="text-4xl font-bold text-slate-900 dark:text-white mb-4">
             Jurusan Tidak Ditemukan
           </h1>
           <p className="text-slate-600 dark:text-slate-400 mb-8">
-            Jurusan yang Anda cari tidak tersedia.
+            Jurusan yang Anda cari dengan ID &quot;{id}&quot; tidak tersedia.
           </p>
           <Link
             href="/jurusan"
@@ -358,7 +194,8 @@ export default async function JurusanDetailPage({
     );
   }
 
-  const IconComponent = jurusan.icon;
+  // Tampilan Halaman Detail Jurusan (jika data ditemukan)
+  const IconComponent = major.icon;
 
   return (
     <div className="min-h-screen bg-white dark:bg-gray-950 pt-24 pb-16">
@@ -385,19 +222,19 @@ export default async function JurusanDetailPage({
         >
           <div className="flex flex-col sm:flex-row items-start gap-6">
             <div
-              className={`w-20 h-20 rounded-2xl flex-shrink-0 flex items-center justify-center bg-gradient-to-br ${jurusan.color} shadow-lg`}
+              className={`w-20 h-20 rounded-2xl flex-shrink-0 flex items-center justify-center bg-gradient-to-br ${major.color} shadow-lg`}
             >
               <IconComponent className="w-10 h-10 text-white" />
             </div>
             <div>
               <div className="text-sm font-semibold text-blue-500 mb-2">
-                {jurusan.short}
+                {major.short}
               </div>
               <h1 className="text-4xl md:text-5xl font-bold text-slate-900 dark:text-white mb-3">
-                {jurusan.title}
+                {major.title}
               </h1>
               <p className="text-lg text-slate-600 dark:text-slate-400">
-                {jurusan.description}
+                {major.description}
               </p>
             </div>
           </div>
@@ -414,13 +251,13 @@ export default async function JurusanDetailPage({
               <div className="absolute inset-0 bg-slate-200 dark:bg-gray-800 animate-pulse" />
             )}
             <Image
-              src={jurusan.image}
-              alt={`Suasana jurusan ${jurusan.title}`}
+              src={major.image}
+              alt={`Suasana jurusan ${major.title}`}
               fill
               priority
               quality={85}
               sizes="(max-width: 768px) 100vw, 1200px"
-              className={`object-contain transition-opacity duration-500 ${
+              className={`object-cover transition-opacity duration-500 ${
                 isImageLoaded ? "opacity-100" : "opacity-0"
               }`}
               onLoad={() => setIsImageLoaded(true)}
@@ -438,7 +275,7 @@ export default async function JurusanDetailPage({
             Tentang Program
           </h2>
           <p className="text-slate-600 dark:text-slate-400 leading-relaxed">
-            {jurusan.detailDescription}
+            {major.detailDescription}
           </p>
         </motion.div>
 
@@ -458,7 +295,7 @@ export default async function JurusanDetailPage({
               </h2>
             </div>
             <ul className="space-y-3">
-              {jurusan.kompetensi.map((item) => (
+              {major.kompetensi.map((item) => (
                 <ListItem key={item} icon={CheckCircle2} text={item} />
               ))}
             </ul>
@@ -479,7 +316,7 @@ export default async function JurusanDetailPage({
               </h2>
             </div>
             <ul className="space-y-3">
-              {jurusan.prospekKerja.map((item) => (
+              {major.prospekKerja.map((item) => (
                 <ProspekListItem key={item} icon={Briefcase} text={item} />
               ))}
             </ul>

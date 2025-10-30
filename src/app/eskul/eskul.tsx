@@ -9,147 +9,83 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 
 gsap.registerPlugin(ScrollTrigger);
 
-// Daftar Eskul disesuaikan berdasarkan list pada gambar
-const eskulData = [
-  {
-    id: "basket",
-    title: "Basket",
-    description:
-      "Olahraga basket yang melatih kerja sama tim, strategi, dan kemampuan fisik melalui permainan dinamis.",
-    emoji: "🏀",
-    color: "from-orange-500 to-red-500",
-  },
-  {
-    id: "futsal",
-    title: "Futsal",
-    description:
-      "Olahraga futsal yang melatih kecepatan, teknik, dan koordinasi tim dalam permainan sepak bola indoor.",
-    emoji: "⚽",
-    color: "from-blue-500 to-cyan-500",
-  },
-  {
-    id: "badminton",
-    title: "Badminton",
-    description:
-      "Olahraga bulu tangkis untuk mengasah ketangkasan, kecepatan, dan strategi permainan kompetitif.",
-    emoji: "🏸",
-    color: "from-yellow-500 to-orange-500",
-  },
-  {
-    id: "perisai-diri",
-    title: "Perisai Diri", // Dianggap sebagai Seni Bela Diri/Pencak Silat
-    description:
-      "Seni bela diri Perisai Diri yang melatih pertahanan diri, kedisiplinan, dan kekuatan mental serta fisik.",
-    emoji: "🥋",
-    color: "from-amber-500 to-orange-600",
-  },
-  {
-    id: "volly",
-    title: "Volly",
-    description:
-      "Olahraga bola voli yang melatih koordinasi, refleks, dan kekompakan tim dalam permainan.",
-    emoji: "🏐",
-    color: "from-teal-500 to-cyan-500",
-  },
-  {
-    id: "dance",
-    title: "Dance (Modern/Koreografi)", // Mengganti 'Dance' menjadi konteks yang lebih spesifik
-    description:
-      "Seni tari modern yang mengembangkan ekspresi, kreativitas, dan kepercayaan diri melalui gerakan koreografi.",
-    emoji: "💃",
-    color: "from-pink-500 to-rose-500",
-  },
-  {
-    id: "paskibra",
-    title: "Paskibra",
-    description:
-      "Pasukan Pengibar Bendera yang melatih kedisiplinan, keberanian, dan jiwa patriotisme.",
-    emoji: "🚩",
-    color: "from-red-500 to-rose-600",
-  },
-  {
-    id: "elite-robotik",
-    title: "ELITE (Robotik)",
-    description:
-      "Kegiatan robotik yang mengembangkan keterampilan dalam pemrograman, elektronika, dan perancangan mekanik.",
-    emoji: "🤖",
-    color: "from-indigo-500 to-violet-500",
-  },
-  {
-    id: "band",
-    title: "Band",
-    description:
-      "Wadah bermusik bersama untuk mengekspresikan kreativitas melalui harmonisasi alat musik modern.",
-    emoji: "🎸",
-    color: "from-purple-500 to-pink-500",
-  },
-  {
-    id: "pramuka",
-    title: "Pramuka",
-    description:
-      "Kegiatan kepramukaan yang mengajarkan kepemimpinan, kemandirian, dan keterampilan survival di alam terbuka.",
-    emoji: "⛺",
-    color: "from-green-500 to-emerald-500",
-  },
-  {
-    id: "tari",
-    title: "Tari (Tradisional)", // Mengganti 'Tari' menjadi konteks yang lebih spesifik
-    description:
-      "Pelestarian tari tradisional Indonesia yang kaya akan nilai budaya dan filosofi nusantara.",
-    emoji: "🎭",
-    color: "from-fuchsia-500 to-violet-500",
-  },
-  {
-    id: "jurnalistik",
-    title: "Jurnalistik",
-    description:
-      "Kegiatan jurnalistik yang melatih kemampuan menulis, meliput berita, dan menyebarkan informasi.",
-    emoji: "📰",
-    color: "from-slate-500 to-gray-600",
-  },
-  {
-    id: "esport",
-    title: "Esport",
-    description:
-      "Wadah bagi gamer kompetitif untuk melatih strategi, kerja sama tim, dan fokus dalam turnamen game.",
-    emoji: "🎮",
-    color: "from-red-600 to-gray-800",
-  },
-  {
-    id: "sbl",
-    title: "SBL (Sekolah Berwawasan Lingkungan)",
-    description:
-      "Kegiatan yang berfokus pada kesadaran lingkungan, konservasi, dan proyek-proyek hijau di sekolah.",
-    emoji: "🌳",
-    color: "from-lime-500 to-green-600",
-  },
-];
-
 export default function EskulPage() {
   const main = useRef<HTMLDivElement>(null);
-  const [dataEkskul, setDataEkskul] = useState(); // Variabel ini sekarang tidak digunakan untuk data, tapi dipertahankan jika ada kebutuhan API di masa depan
+  const [dataEkskul, setDataEkskul] = useState<any[]>([]);
 
+  // --- FUNGSI FETCH DATA (DENGAN DEBUGGING) ---
   const fetchEkskuls = async () => {
-    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/extras`);
-    const data = await res.json();
-    setDataEkskul(data);
-  }
+    // 1. Cek environment variable
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+    if (!apiUrl) {
+      console.error(
+        "Fetch Gagal: Environment variable NEXT_PUBLIC_API_URL tidak di-set."
+      );
+    }
 
+    const targetUrl = `${apiUrl}/api/extras`;
+    console.log(`Mencoba fetch ke: ${targetUrl}`); // Log 1: Cek URL
 
+    try {
+      const res = await fetch(targetUrl);
+
+      // 2. Cek jika server error (bukan 200 OK)
+      if (!res.ok) {
+        console.error(
+          `Fetch Gagal: Server merespons dengan status ${res.status}`
+        ); // Log 2: Error HTTP
+        setDataEkskul([]);
+        return;
+      }
+
+      const result = await res.json();
+
+      // 3. Cek struktur data (array langsung atau object { items: [...] })
+      let dataArray = [];
+      if (Array.isArray(result)) {
+        dataArray = result;
+        console.log(`Fetch Sukses: ${dataArray.length} data diterima (array).`); // Log 3: Sukses
+      } else if (result && Array.isArray(result.items)) {
+        dataArray = result.items;
+        console.log(
+          `Fetch Sukses: ${dataArray.length} data diterima (dari 'items').`
+        ); // Log 3: Sukses
+      } else {
+        console.warn(
+          "Fetch Sukses, tapi data bukan array atau tidak ada key 'items'.",
+          result
+        ); // Log 4: Data aneh
+      }
+
+      setDataEkskul(dataArray);
+    } catch (error) {
+      // 4. Cek error jaringan (CORS, API mati, dll)
+      console.error("Fetch Error (Blok Catch):", error); // Log 5: Error Jaringan
+      setDataEkskul([]);
+    }
+  };
+
+  // --- useEffect 1: HANYA UNTUK FETCH DATA ---
   useEffect(() => {
     fetchEkskuls();
-    // Mematikan fetch API yang tidak perlu jika menggunakan data lokal
-    // fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/majors`)
-    //   .then((res) => res.json())
-    //   .then((result) => setDataEkskul(result.items))
-    //   .catch(console.error);
+  }, []); // <-- Dependency kosong
+
+  // --- useEffect 2: HANYA UNTUK ANIMASI ---
+  useEffect(() => {
+    if (dataEkskul.length === 0) {
+      console.log("Menunggu data... Animasi GSAP belum berjalan."); // Log 6: Menunggu
+      return;
+    }
+
+    console.log("Data siap. Menjalankan animasi GSAP..."); // Log 7: GSAP Jalan
 
     const ctx = gsap.context(() => {
       // Animasi scroll trigger untuk cards
       gsap.fromTo(
         ".eskul-card",
-        { opacity: 0, y: 50, scale: 0.9 },
+        { opacity: 0, y: 50, scale: 0.9 }, // 'from'
         {
+          // 'to'
           opacity: 1,
           y: 0,
           scale: 1,
@@ -217,13 +153,9 @@ export default function EskulPage() {
     }, main);
 
     return () => ctx.revert();
-  }, []);
+  }, [dataEkskul]); // <-- KUNCI: Jalankan ulang efek ini saat dataEkskul berubah
 
-  // Logika log dihapus karena dataEkskul tidak diisi dari fetch
-  // if (dataEkskul) {
-  //   console.log(dataEkskul);
-  // } else console.log("eskul data still kosong");
-
+  // --- BAGIAN RENDER (JSX) ---
   return (
     <div
       ref={main}
@@ -248,25 +180,30 @@ export default function EskulPage() {
         </motion.div>
 
         <div className="eskul-grid grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
-          {eskulData.map((item) => (
-            <div key={item.id} className="eskul-card opacity-0">
+          {dataEkskul.map((item) => (
+            <div key={item.ExtraID} className="eskul-card">
               <Link
-                href={`/eskul/${item.id}`}
+                href={`/eskul/${item.ExtraName}?=${item.ExtraID}`}
                 className="bg-white dark:bg-gray-900 border border-slate-200 dark:border-gray-800 rounded-2xl p-6 relative group overflow-hidden transition-colors duration-300 hover:border-blue-500 h-full flex flex-col justify-between"
               >
                 <div>
                   <div className="relative z-10">
                     <div
-                      className={`w-12 h-12 rounded-lg flex items-center justify-center bg-linear-to-br ${item.color}`}
+                      className={`w-12 h-12 rounded-lg flex items-center justify-center bg-blue-100 text-blue-600`}
                     >
-                      <span className="text-2xl">{item.emoji}</span>
+                      <span className="text-2xl font-bold">
+                        {item.ExtraName.charAt(0)}
+                      </span>
                     </div>
                     <h3 className="mt-4 text-xl font-bold text-slate-900 dark:text-gray-100">
-                      {item.title}
+                      {item.ExtraName}
                     </h3>
+
+                    {/* ===== INI PERBAIKANNYA ===== */}
                     <p className="mt-2 text-slate-600 dark:text-gray-400 text-sm">
-                      {item.description}
+                      {item.ExtraSchedule}
                     </p>
+                    {/* ============================= */}
                   </div>
                 </div>
 
@@ -281,7 +218,7 @@ export default function EskulPage() {
                 </div>
 
                 <div
-                  className={`absolute -bottom-10 -right-10 w-28 h-28 bg-linear-to-br ${item.color} rounded-full opacity-10 transition-all duration-500 ease-in-out group-hover:opacity-20 group-hover:scale-150`}
+                  className={`absolute -bottom-10 -right-10 w-28 h-28 bg-blue-100 rounded-full opacity-10 transition-all duration-500 ease-in-out group-hover:opacity-20 group-hover:scale-150`}
                 ></div>
               </Link>
             </div>
