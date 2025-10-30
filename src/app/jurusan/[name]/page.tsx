@@ -21,7 +21,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
-import React, { useState, memo } from "react";
+import React, { useState, memo, useEffect } from "react";
 
 // Data lengkap dan diperbarui dengan path gambar dan konten yang sesuai.
 const jurusanData = {
@@ -313,9 +313,25 @@ const ProspekListItem = memo(
 );
 ProspekListItem.displayName = "ProspekListItem";
 
-export default function JurusanDetailPage() {
-  const params = useParams();
-  const id = params.id as string;
+export default async function JurusanDetailPage({
+  searchParams
+}: {
+  searchParams: Promise<{id: string}>
+}) {
+  const {id} = await searchParams;
+  const [major, setMajor] = useState();
+
+  const fetchMajor = async () => {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/majors/${id}`);
+    const data = await res.json();
+    setMajor(data);
+  }
+
+  useEffect(() => {
+    fetchMajor();
+  });
+
+
   const jurusan = jurusanData[id as keyof typeof jurusanData];
 
   const [isImageLoaded, setIsImageLoaded] = useState(false);

@@ -125,15 +125,13 @@ const jurusanData = [
 
 export default function JurusanPage() {
   const main = useRef<HTMLDivElement>(null);
-  const [majors, setMajors] = useState();
+  const [majors, setMajors] = useState(); //ambil data dari majors
 
   const fetchMajors = async () => {
     const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/majors`);
     const data = await res.json();
     setMajors(data);
   }
-
-  console.log(majors);
 
   useEffect(() => {
     fetchMajors();
@@ -165,6 +163,9 @@ export default function JurusanPage() {
       ref={main}
       className="min-h-screen p-8 md:p-12 lg:p-16 bg-white dark:bg-gray-950"
     >
+      <div>
+        Data: {majors}
+      </div>
       <div className="max-w-7xl mx-auto">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
