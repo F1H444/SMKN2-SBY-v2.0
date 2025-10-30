@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react"; // Kembalikan useState
+import { useEffect, useRef } from "react";
 import { motion } from "framer-motion";
 import {
   Image as ImageIcon,
@@ -15,7 +15,6 @@ import {
   CircuitBoard,
   Zap,
   ArrowRight,
-  HelpCircle, // Ikon default jika ID tidak cocok
 } from "lucide-react";
 import Link from "next/link";
 import { gsap } from "gsap";
@@ -23,85 +22,116 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 
 gsap.registerPlugin(ScrollTrigger);
 
-// --- PERBAIKAN 1: Ubah data array menjadi 'kamus' (object) ---
-// Ini untuk data presentasi (visual)
-// Kuncinya (1, 2, 3) harus cocok dengan MajorID dari API
-const jurusanVisuals: any = {
-  1: { icon: Code, color: "from-blue-500 to-cyan-500" }, // RPL
-  2: { icon: Cpu, color: "from-green-500 to-emerald-500" }, // TKJ
-  3: { icon: Wrench, color: "from-slate-500 to-gray-600" }, // TPM
-  4: { icon: Bike, color: "from-orange-500 to-amber-500" }, // TSM
-  5: { icon: Car, color: "from-red-500 to-rose-500" }, // TKR
-  6: { icon: Building, color: "from-yellow-500 to-lime-500" }, // DPIB
-  7: { icon: Home, color: "from-stone-500 to-neutral-500" }, // TKP
-  8: { icon: ImageIcon, color: "from-purple-500 to-violet-500" }, // Animasi
-  9: { icon: CircuitBoard, color: "from-teal-500 to-cyan-500" }, // TEI
-  10: { icon: Video, color: "from-fuchsia-500 to-pink-500" }, // TAV
-  11: { icon: Zap, color: "from-sky-500 to-indigo-500" }, // TITL
-};
-
-// Fallback jika ada data API tapi visualnya tidak ada
-const defaultVisual = { icon: HelpCircle, color: "from-gray-500 to-gray-600" };
+// PERBAIKAN: ID disesuaikan agar konsisten dengan halaman detail
+const jurusanData = [
+  {
+    id: "rpl",
+    short: "RPL",
+    title: "Rekayasa Perangkat Lunak",
+    description:
+      "Mempelajari pengembangan, pemeliharaan, dan manajemen kualitas perangkat lunak.",
+    icon: Code,
+    color: "from-blue-500 to-cyan-500",
+  },
+  {
+    id: "tkj",
+    short: "TKJ",
+    title: "Teknik Komputer dan Jaringan",
+    description:
+      "Fokus pada perancangan, instalasi, dan konfigurasi infrastruktur jaringan.",
+    icon: Cpu,
+    color: "from-green-500 to-emerald-500",
+  },
+  {
+    id: "tpm",
+    short: "TPM",
+    title: "Teknik Pemesinan",
+    description:
+      "Mengasah keterampilan produksi manufaktur menggunakan mesin perkakas presisi.",
+    icon: Wrench,
+    color: "from-slate-500 to-gray-600",
+  },
+  {
+    id: "tsm",
+    short: "TSM",
+    title: "Teknik Sepeda Motor",
+    description:
+      "Spesialisasi dalam perawatan, perbaikan, dan modifikasi sepeda motor.",
+    icon: Bike,
+    color: "from-orange-500 to-amber-500",
+  },
+  {
+    id: "tkr",
+    short: "TKR",
+    title: "Teknik Kendaraan Ringan",
+    description:
+      "Mempersiapkan tenaga ahli di bidang perawatan dan perbaikan mobil modern.",
+    icon: Car,
+    color: "from-red-500 to-rose-500",
+  },
+  {
+    id: "dpib",
+    short: "DPIB",
+    title: "Desain Pemodelan & Info Bangunan",
+    description:
+      "Mempelajari perancangan bangunan, pemodelan 3D, dan manajemen BIM.",
+    icon: Building,
+    color: "from-yellow-500 to-lime-500",
+  },
+  {
+    id: "tkp",
+    short: "TKP",
+    title: "Teknik Konstruksi & Perumahan",
+    description: "Fokus pada pelaksanaan dan pengawasan proyek konstruksi.",
+    icon: Home,
+    color: "from-stone-500 to-neutral-500",
+  },
+  {
+    id: "animasi",
+    short: "ANI",
+    title: "Animasi",
+    description:
+      "Mengembangkan kreativitas dalam pembuatan animasi 2D, 3D, dan efek visual.",
+    icon: ImageIcon,
+    color: "from-purple-500 to-violet-500",
+  },
+  {
+    id: "tei",
+    short: "TEI",
+    title: "Teknik Elektronika Industri",
+    description:
+      "Mempelajari perancangan dan pemeliharaan sistem kontrol elektronik.",
+    icon: CircuitBoard,
+    color: "from-teal-500 to-cyan-500",
+  }, // ID diubah dari "elektro" menjadi "tei"
+  {
+    id: "tav",
+    short: "TAV",
+    title: "Teknik Audio Video",
+    description:
+      "Fokus pada perbaikan, instalasi, dan perawatan perangkat audio visual.",
+    icon: Video,
+    color: "from-fuchsia-500 to-pink-500",
+  },
+  {
+    id: "titl",
+    short: "TITL",
+    title: "Teknik Instalasi Tenaga Listrik",
+    description: "Berfokus pada instalasi dan perbaikan sistem tenaga listrik.",
+    icon: Zap,
+    color: "from-sky-500 to-indigo-500",
+  },
+];
 
 export default function JurusanPage() {
   const main = useRef<HTMLDivElement>(null);
 
-  // --- PERBAIKAN 2: State untuk menampung data GABUNGAN ---
-  const [jurusanList, setJurusanList] = useState<any[]>([]);
-
-  // --- PERBAIKAN 3: useEffect untuk FETCH dan GABUNGKAN data ---
   useEffect(() => {
-    const fetchAndMergeMajors = async () => {
-      try {
-        const res = await fetch(
-          `${process.env.NEXT_PUBLIC_API_URL}/api/majors`
-        );
-        const result = await res.json();
-
-        let apiData = [];
-        // Cek jika API mengembalikan { data: [...] }
-        if (result && Array.isArray(result.data)) {
-          apiData = result.data;
-        } else if (Array.isArray(result)) {
-          apiData = result; // Atau jika API mengembalikan [...]
-        } else {
-          console.error("Format data API tidak terduga", result);
-          return;
-        }
-
-        // Gabungkan data API dengan data visual
-        const combinedData = apiData.map((major: any) => {
-          const visual = jurusanVisuals[major.MajorID] || defaultVisual;
-          return {
-            ...major, // Data dari API (MajorID, MajorName, MajorDesc)
-            ...visual, // Data dari 'kamus' (icon, color)
-          };
-        });
-
-        setJurusanList(combinedData); // Simpan data gabungan ke state
-      } catch (error) {
-        console.error("Gagal mengambil data jurusan:", error);
-      }
-    };
-
-    fetchAndMergeMajors();
-  }, []); // <-- Dependency kosong, fetch hanya sekali
-
-  // --- PERBAIKAN 4: useEffect untuk GSAP (terpisah) ---
-  // Ini baru berjalan SETELAH 'jurusanList' terisi
-  useEffect(() => {
-    // Jangan jalankan animasi jika data belum siap
-    if (jurusanList.length === 0) {
-      return;
-    }
-
-    // Data sudah siap, jalankan animasi
     const ctx = gsap.context(() => {
       gsap.fromTo(
         ".jurusan-card",
-        { opacity: 0, y: 50, scale: 0.95 }, // 'from'
+        { opacity: 0, y: 50, scale: 0.95 },
         {
-          // 'to'
           opacity: 1,
           y: 0,
           scale: 1,
@@ -117,7 +147,7 @@ export default function JurusanPage() {
       );
     }, main);
     return () => ctx.revert();
-  }, [jurusanList]); // <-- KUNCI: Jalankan ulang saat 'jurusanList' berubah
+  }, []);
 
   return (
     <div
@@ -136,24 +166,23 @@ export default function JurusanPage() {
             <span className="text-purple-500">Bakatmu</span>
           </h1>
           <p className="mt-4 text-lg text-slate-600 dark:text-slate-400 max-w-2xl mx-auto">
-            SMKN 2 Surabaya menawarkan {jurusanList.length} program keahlian
-            yang dirancang untuk mempersiapkanmu menjadi profesional yang siap
-            bersaing di dunia industri.
+            SMKN 2 Surabaya menawarkan 11 program keahlian yang dirancang untuk
+            mempersiapkanmu menjadi profesional yang siap bersaing di dunia
+            industri.
           </p>
         </motion.div>
 
-        {/* --- PERBAIKAN 5: Render dari 'jurusanList' (state) --- */}
         <div className="jurusan-grid grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 md:gap-8">
-          {jurusanList.map((item) => {
-            const IconComponent = item.icon; // Ikon dari data gabungan
+          {jurusanData.map((item) => {
+            const IconComponent = item.icon;
             return (
               <div
-                key={item.MajorID} // Key dari API
-                className="jurusan-card" // Hapus opacity-0
+                key={item.id}
+                className="jurusan-card opacity-0"
                 style={{ perspective: "1000px" }}
               >
                 <Link
-                  href={`/jurusan/${item.MajorName}?=${item.MajorID}`} // Link dari API
+                  href={`/jurusan/${item.id}`}
                   className="bg-white dark:bg-gray-900 border border-slate-200 dark:border-gray-800 rounded-2xl p-6 relative group overflow-hidden transition-all duration-300 hover:border-blue-500 hover:shadow-2xl hover:shadow-blue-500/10 h-full flex flex-col justify-between block"
                 >
                   <div>
@@ -164,10 +193,10 @@ export default function JurusanPage() {
                         <IconComponent className="w-6 h-6 text-white" />
                       </div>
                       <h3 className="mt-4 text-xl font-bold text-slate-900 dark:text-gray-100">
-                        {item.MajorName} {/* Judul dari API */}
+                        {item.title}
                       </h3>
                       <p className="mt-2 text-slate-600 dark:text-gray-400 text-sm">
-                        {item.MajorDesc} {/* Deskripsi dari API */}
+                        {item.description}
                       </p>
                     </div>
                   </div>
