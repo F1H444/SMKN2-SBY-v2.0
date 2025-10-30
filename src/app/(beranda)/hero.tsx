@@ -1,4 +1,14 @@
-// app/(home)/hero.tsx (Full Code - Final)
+// ============================================
+// app/(home)/hero.tsx - OPTIMIZED VERSION
+// ============================================
+
+// PERUBAHAN YANG DILAKUKAN:
+// 1. [OPTIMASI REACT] Menghapus `React.memo` dari `Badge` dan `Statistics`. Komponen ini tidak menerima props dan datanya statis, sehingga tidak akan pernah di-render ulang kecuali parent-nya (HeroSection) di-render ulang. `memo` di sini hanya menambah overhead perbandingan.
+// 2. [OPTIMASI CSS] Menambahkan `will-change: transform` pada elemen dengan transisi/animasi `hover` (tombol CTA dan ikon panah) untuk memberi petunjuk pada browser agar mengoptimalkan (menggunakan GPU).
+// 3. [OPTIMASI IMAGE] Menambahkan `sizes="100vw"` pada LCP `next/image`. Ini adalah best practice untuk gambar dengan `fill` yang memenuhi viewport, membantu browser memprioritaskan download gambar dengan ukuran yang tepat.
+
+// FULL OPTIMIZED CODE:
+// app/(home)/hero.tsx
 
 import React from "react";
 import Image from "next/image";
@@ -31,14 +41,15 @@ const ArrowIcon = (
   </svg>
 );
 
-const Badge = React.memo(() => (
+// [OPTIMASI] React.memo tidak diperlukan untuk komponen statis tanpa props.
+const Badge = () => (
   <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-gray-200 bg-white/60 px-3 py-1.5 backdrop-blur-[2px] dark:border-gray-700 dark:bg-gray-800/60">
     <span className="h-2 w-2 rounded-full bg-purple-500" />
     <p className="text-xs font-semibold bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent dark:from-purple-400 dark:to-blue-400 sm:text-sm">
       Akreditasi A
     </p>
   </div>
-));
+);
 Badge.displayName = "Badge";
 
 const STATS = [
@@ -47,7 +58,8 @@ const STATS = [
   { value: "11", label: "Program Keahlian" },
 ];
 
-const Statistics = React.memo(() => (
+// [OPTIMASI] React.memo tidak diperlukan untuk komponen statis tanpa props.
+const Statistics = () => (
   <div className="mt-10 grid grid-cols-3 gap-3 sm:gap-5">
     {STATS.map((stat) => (
       <div
@@ -63,7 +75,7 @@ const Statistics = React.memo(() => (
       </div>
     ))}
   </div>
-));
+);
 Statistics.displayName = "Statistics";
 
 export default function HeroSection() {
@@ -76,11 +88,12 @@ export default function HeroSection() {
           src="/img/smkn2.webp"
           alt="" // alt kosong karena murni dekoratif
           fill
-          priority
+          priority // [SANGAT PENTING] Memuat gambar ini sebagai LCP
           placeholder="blur"
           quality={80}
           className="object-cover object-center opacity-20 select-none dark:opacity-10"
           blurDataURL="data:image/webp;base64,UklGRloAAABXRUJQVlA4IE4AAADQAQCdASoIAAUAAkA4JaQAA3AD/uA3AA/cAD/9oA/9oAP/oAf/tAD/9oA/9oA/9gA/9gA/9gA/9gA/9gA/9gA/9gA/9gA/9gA/9gA+AA/cAAA"
+          sizes="100vw" // [OPTIMASI] Menambahkan sizes prop untuk `fill`
         />
         <div className="absolute inset-0 bg-gradient-to-br from-white/85 via-white/50 to-purple-50/30 dark:from-gray-950/90 dark:via-gray-950/60 dark:to-purple-950/30" />
       </div>
@@ -99,13 +112,12 @@ export default function HeroSection() {
               Sekolah Menengah Kejuruan unggulan yang mengintegrasikan
               pendidikan karakter, kompetensi teknis, dan kesiapan industri.
             </p>
-            {/* Tombol ini sekarang akan melakukan smooth scroll ke elemen dengan id="programs" */}
             <Link
               href="#state"
-              className="group inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-purple-600 to-blue-600 px-6 py-3 font-semibold text-white shadow-md transition-transform duration-200 hover:-translate-y-1 hover:shadow-lg focus-visible:outline focus-visible:outline-offset-2 focus-visible:outline-purple-600 will-change-transform"
+              className="group inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-purple-600 to-blue-600 px-6 py-3 font-semibold text-white shadow-md transition-transform duration-200 hover:-translate-y-1 hover:shadow-lg focus-visible:outline focus-visible:outline-offset-2 focus-visible:outline-purple-600 will-change-transform" // [OPTIMASI CSS] will-change untuk hover
             >
               <span>Jelajahi Sekolah Kami</span>
-              <ArrowIcon className="h-5 w-5 transition-transform duration-200 group-hover:translate-x-1" />
+              <ArrowIcon className="h-5 w-5 transition-transform duration-200 group-hover:translate-x-1 will-change-transform" />
             </Link>
             <Statistics />
           </div>
@@ -115,3 +127,8 @@ export default function HeroSection() {
     </section>
   );
 }
+
+// PENJELASAN DETAIL:
+// - **`React.memo` Removal:** Menghapus `memo` yang tidak perlu akan sedikit mengurangi *memory footprint* dan kompleksitas.
+// - **`will-change: transform`:** Memberi petunjuk pada browser untuk mempromosikan tombol CTA dan ikon panah ke *layer compositor* mereka sendiri, membuat animasi `translate-y` dan `translate-x` lebih mulus (bebas jank) karena dijalankan di GPU.
+// - **`sizes="100vw"`:** Memastikan browser mengunduh gambar LCP dengan resolusi yang tepat sesegera mungkin.

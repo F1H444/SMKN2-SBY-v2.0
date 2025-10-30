@@ -1,22 +1,48 @@
+// ============================================
+// app/(home)/others.tsx - OPTIMIZED VERSION
+// ============================================
+
+// PERUBAHAN YANG DILAKUKAN:
+// 1. [OPTIMASI BUNDLE] Impor `lucide-react` dikembalikan ke impor standar (e.g., `import { Code } from "lucide-react"`). Optimasi bundle (tree-shaking) akan ditangani secara otomatis oleh Next.js melalui `next.config.js`.
+// 2. [OPTIMASI REACT] Semua optimasi `memo` dan `useRef` dipertahankan untuk mencegah re-render yang tidak perlu saat scroll.
+// 3. [OPTIMASI CSS] Penggunaan `contain: content` dan `will-change: transform` pada section-section dipertahankan untuk performa rendering dan animasi yang lebih baik.
+
+// FULL OPTIMIZED CODE:
 "use client";
 import { useState, useRef, useEffect, memo } from "react";
 import React from "react";
+import Link from "next/link";
+// [OPTIMASI BUNDLE] Impor ikon standar. Tree-shaking ditangani oleh next.config.js
+import {
+  Image as ImageIcon,
+  Code,
+  Cpu,
+  Wrench,
+  Video,
+  Building,
+  Car,
+  Bike,
+  Home,
+  CircuitBoard,
+  Zap,
+  ArrowRight,
+} from "lucide-react";
 
 // --- TYPE DEFINITIONS ---
 interface Jurusan {
-  id: number;
+  id: string;
+  short: string;
   title: string;
-  icon: string;
   description: string;
+  icon: React.ElementType;
   color: string;
 }
 interface Eskul {
-  id: number;
-  name: string;
+  id: string;
+  title: string;
   description: string;
-  icon: string;
+  emoji: string;
   color: string;
-  participants: string;
 }
 interface Achievement {
   id: number;
@@ -25,192 +51,227 @@ interface Achievement {
   icon: string;
   bgColor: string;
 }
-interface News {
-  id: number;
-  title: string;
-  date: string;
-  excerpt: string;
-}
 
 // --- DATA STATIS DIDEFINISIKAN DI LUAR KOMPONEN ---
+
+// Data jurusan
 const jurusanData: Jurusan[] = [
   {
-    id: 1,
+    id: "rpl",
+    short: "RPL",
     title: "Rekayasa Perangkat Lunak",
-    icon: "RPL",
     description:
       "Mempelajari pengembangan, pemeliharaan, dan manajemen kualitas perangkat lunak.",
-    color: "bg-blue-600",
+    icon: Code,
+    color: "from-blue-500 to-cyan-500",
   },
   {
-    id: 2,
-    title: "Teknik Komputer & Jaringan",
-    icon: "TKJ",
+    id: "tkj",
+    short: "TKJ",
+    title: "Teknik Komputer dan Jaringan",
     description:
-      "Fokus pada perancangan, instalasi, dan konfigurasi infrastruktur jaringan dan server.",
-    color: "bg-green-600",
+      "Fokus pada perancangan, instalasi, dan konfigurasi infrastruktur jaringan.",
+    icon: Cpu,
+    color: "from-green-500 to-emerald-500",
   },
   {
-    id: 3,
+    id: "tpm",
+    short: "TPM",
     title: "Teknik Pemesinan",
-    icon: "TPM",
     description:
       "Mengasah keterampilan produksi manufaktur menggunakan mesin perkakas presisi.",
-    color: "bg-slate-600",
+    icon: Wrench,
+    color: "from-slate-500 to-gray-600",
   },
   {
-    id: 4,
+    id: "tsm",
+    short: "TSM",
     title: "Teknik Sepeda Motor",
-    icon: "TSM",
     description:
-      "Spesialisasi dalam perawatan, perbaikan, dan modifikasi teknologi sepeda motor.",
-    color: "bg-orange-600",
+      "Spesialisasi dalam perawatan, perbaikan, dan modifikasi sepeda motor.",
+    icon: Bike,
+    color: "from-orange-500 to-amber-500",
   },
   {
-    id: 5,
+    id: "tkr",
+    short: "TKR",
     title: "Teknik Kendaraan Ringan",
-    icon: "TKR",
     description:
-      "Memperdalam tenaga ahli di bidang perawatan dan perbaikan mobil modern.",
-    color: "bg-red-600",
+      "Mempersiapkan tenaga ahli di bidang perawatan dan perbaikan mobil modern.",
+    icon: Car,
+    color: "from-red-500 to-rose-500",
   },
   {
-    id: 6,
+    id: "dpib",
+    short: "DPIB",
     title: "Desain Pemodelan & Info Bangunan",
-    icon: "DPIB",
     description:
-      "Mempelajari perancangan bangunan, pemodelan 3D, dan manajemen informasi konstruksi (BIM).",
-    color: "bg-amber-600",
+      "Mempelajari perancangan bangunan, pemodelan 3D, dan manajemen BIM.",
+    icon: Building,
+    color: "from-yellow-500 to-lime-500",
   },
   {
-    id: 7,
+    id: "tkp",
+    short: "TKP",
     title: "Teknik Konstruksi & Perumahan",
-    icon: "TKP",
-    description:
-      "Fokus pada pelaksanaan, pengawasan, dan manajemen proyek konstruksi.",
-    color: "bg-teal-600",
+    description: "Fokus pada pelaksanaan dan pengawasan proyek konstruksi.",
+    icon: Home,
+    color: "from-stone-500 to-neutral-500",
   },
   {
-    id: 8,
+    id: "animasi",
+    short: "ANI",
     title: "Animasi",
-    icon: "ANI",
     description:
       "Mengembangkan kreativitas dalam pembuatan animasi 2D, 3D, dan efek visual.",
-    color: "bg-purple-600",
+    icon: ImageIcon,
+    color: "from-purple-500 to-violet-500",
   },
   {
-    id: 9,
+    id: "tei",
+    short: "TEI",
     title: "Teknik Elektronika Industri",
-    icon: "TEI",
     description:
-      "Mempelajari perancangan, perakitan, dan pemeliharaan sistem kontrol elektronik.",
-    color: "bg-indigo-600",
+      "Mempelajari perancangan dan pemeliharaan sistem kontrol elektronik.",
+    icon: CircuitBoard,
+    color: "from-teal-500 to-cyan-500",
   },
   {
-    id: 10,
+    id: "tav",
+    short: "TAV",
     title: "Teknik Audio Video",
-    icon: "TAV",
     description:
-      "Fokus pada perbaikan, instalasi, dan perawatan perangkat elektronik audio dan video.",
-    color: "bg-fuchsia-600",
+      "Fokus pada perbaikan, instalasi, dan perawatan perangkat audio visual.",
+    icon: Video,
+    color: "from-fuchsia-500 to-pink-500",
   },
   {
-    id: 11,
+    id: "titl",
+    short: "TITL",
     title: "Teknik Instalasi Tenaga Listrik",
-    icon: "TITL",
-    description:
-      "Berfokus pada instalasi, pemeliharaan, dan perbaikan sistem tenaga listrik.",
-    color: "bg-sky-600",
+    description: "Berfokus pada instalasi dan perbaikan sistem tenaga listrik.",
+    icon: Zap,
+    color: "from-sky-500 to-indigo-500",
   },
 ];
+
+// Data eskul
 const eskulData: Eskul[] = [
   {
-    id: 1,
-    name: "Ambalan (Pramuka)",
+    id: "basket",
+    title: "Basket",
     description:
-      "Mengajarkan kepemimpinan, kemandirian, dan keterampilan bertahan hidup.",
-    icon: "🏕️",
-    color: "bg-green-700",
-    participants: "50+ Siswa",
+      "Olahraga basket yang melatih kerja sama tim, strategi, dan kemampuan fisik melalui permainan dinamis.",
+    emoji: "🏀",
+    color: "from-orange-500 to-red-500",
   },
   {
-    id: 2,
-    name: "Badminton",
+    id: "futsal",
+    title: "Futsal",
     description:
-      "Mengasah ketangkasan, kecepatan, dan strategi permainan kompetitif.",
-    icon: "🏸",
-    color: "bg-orange-600",
-    participants: "35+ Siswa",
+      "Olahraga futsal yang melatih kecepatan, teknik, dan koordinasi tim dalam permainan sepak bola indoor.",
+    emoji: "⚽",
+    color: "from-blue-500 to-cyan-500",
   },
   {
-    id: 3,
-    name: "Band",
+    id: "badminton",
+    title: "Badminton",
     description:
-      "Wadah bermusik bersama untuk mengekspresikan kreativitas dan harmoni.",
-    icon: "🎸",
-    color: "bg-purple-600",
-    participants: "20+ Siswa",
+      "Olahraga bulu tangkis untuk mengasah ketangkasan, kecepatan, dan strategi permainan kompetitif.",
+    emoji: "🏸",
+    color: "from-yellow-500 to-orange-500",
   },
   {
-    id: 4,
-    name: "Basket",
-    description: "Melatih kerja sama tim, strategi, dan kemampuan fisik.",
-    icon: "🏀",
-    color: "bg-red-600",
-    participants: "40+ Siswa",
-  },
-  {
-    id: 5,
-    name: "Dance (Tari)",
-    description: "Mengembangkan ekspresi, kreativitas, dan kepercayaan diri.",
-    icon: "💃",
-    color: "bg-pink-600",
-    participants: "30+ Siswa",
-  },
-  {
-    id: 6,
-    name: "Futsal",
+    id: "perisai-diri",
+    title: "Perisai Diri",
     description:
-      "Melatih kecepatan, teknik, dan koordinasi tim dalam sepak bola indoor.",
-    icon: "⚽",
-    color: "bg-blue-600",
-    participants: "45+ Siswa",
+      "Seni bela diri Perisai Diri yang melatih pertahanan diri, kedisiplinan, dan kekuatan mental serta fisik.",
+    emoji: "🥋",
+    color: "from-amber-500 to-orange-600",
   },
   {
-    id: 7,
-    name: "Jurnalis",
+    id: "volly",
+    title: "Volly",
     description:
-      "Melatih kemampuan menulis, meliput berita, dan menyebarkan informasi.",
-    icon: "📰",
-    color: "bg-slate-600",
-    participants: "25+ Siswa",
+      "Olahraga bola voli yang melatih koordinasi, refleks, dan kekompakan tim dalam permainan.",
+    emoji: "🏐",
+    color: "from-teal-500 to-cyan-500",
   },
   {
-    id: 8,
-    name: "Paskibra",
-    description: "Melatih kedisiplinan, keberanian, dan jiwa patriotisme.",
-    icon: "🇮🇩",
-    color: "bg-red-700",
-    participants: "35+ Siswa",
-  },
-  {
-    id: 9,
-    name: "Seni Bela Diri",
+    id: "dance",
+    title: "Dance (Modern/Koreografi)",
     description:
-      "Melatih pertahanan diri, disiplin, dan kekuatan mental serta fisik.",
-    icon: "🥋",
-    color: "bg-amber-600",
-    participants: "30+ Siswa",
+      "Seni tari modern yang mengembangkan ekspresi, kreativitas, dan kepercayaan diri melalui gerakan koreografi.",
+    emoji: "💃",
+    color: "from-pink-500 to-rose-500",
   },
   {
-    id: 10,
-    name: "Voli",
-    description: "Melatih koordinasi, refleks, dan kekompakan tim.",
-    icon: "🏐",
-    color: "bg-teal-600",
-    participants: "38+ Siswa",
+    id: "paskibra",
+    title: "Paskibra",
+    description:
+      "Pasukan Pengibar Bendera yang melatih kedisiplinan, keberanian, dan jiwa patriotisme.",
+    emoji: "🚩",
+    color: "from-red-500 to-rose-600",
+  },
+  {
+    id: "elite-robotik",
+    title: "ELITE (Robotik)",
+    description:
+      "Kegiatan robotik yang mengembangkan keterampilan dalam pemrograman, elektronika, dan perancangan mekanik.",
+    emoji: "🤖",
+    color: "from-indigo-500 to-violet-500",
+  },
+  {
+    id: "band",
+    title: "Band",
+    description:
+      "Wadah bermusik bersama untuk mengekspresikan kreativitas melalui harmonisasi alat musik modern.",
+    emoji: "🎸",
+    color: "from-purple-500 to-pink-500",
+  },
+  {
+    id: "pramuka",
+    title: "Pramuka",
+    description:
+      "Kegiatan kepramukaan yang mengajarkan kepemimpinan, kemandirian, dan keterampilan survival di alam terbuka.",
+    emoji: "⛺",
+    color: "from-green-500 to-emerald-500",
+  },
+  {
+    id: "tari",
+    title: "Tari (Tradisional)",
+    description:
+      "Pelestarian tari tradisional Indonesia yang kaya akan nilai budaya dan filosofi nusantara.",
+    emoji: "🎭",
+    color: "from-fuchsia-500 to-violet-500",
+  },
+  {
+    id: "jurnalistik",
+    title: "Jurnalistik",
+    description:
+      "Kegiatan jurnalistik yang melatih kemampuan menulis, meliput berita, dan menyebarkan informasi.",
+    emoji: "📰",
+    color: "from-slate-500 to-gray-600",
+  },
+  {
+    id: "esport",
+    title: "Esport",
+    description:
+      "Wadah bagi gamer kompetitif untuk melatih strategi, kerja sama tim, dan fokus dalam turnamen game.",
+    emoji: "🎮",
+    color: "from-red-600 to-gray-800",
+  },
+  {
+    id: "sbl",
+    title: "SBL (Sekolah Berwawasan Lingkungan)",
+    description:
+      "Kegiatan yang berfokus pada kesadaran lingkungan, konservasi, dan proyek-proyek hijau di sekolah.",
+    emoji: "🌳",
+    color: "from-lime-500 to-green-600",
   },
 ];
+
+// Data prestasi
 const achievementsData: Achievement[] = [
   {
     id: 1,
@@ -241,29 +302,6 @@ const achievementsData: Achievement[] = [
     bgColor: "bg-purple-600",
   },
 ];
-const newsData: News[] = [
-  {
-    id: 1,
-    title: "SMKN 2 Surabaya Raih Akreditasi A",
-    date: "15 Sep 2024",
-    excerpt:
-      "Prestasi membanggakan dengan akreditasi A dari BAN-SM untuk seluruh program keahlian.",
-  },
-  {
-    id: 2,
-    title: "MoU dengan Industri Jepang",
-    date: "22 Agu 2024",
-    excerpt:
-      "Kerjasama internasional membuka peluang magang dan sertifikasi siswa di Jepang.",
-  },
-  {
-    id: 3,
-    title: "Workshop AI dan Machine Learning",
-    date: "10 Agu 2024",
-    excerpt:
-      "Siswa RPL dan TKJ mengikuti pelatihan intensif teknologi AI dari pakar industri.",
-  },
-];
 
 // --- SUB-KOMPONEN YANG DI-MEMOIZE ---
 const ArrowIcon = memo(
@@ -288,11 +326,11 @@ const ArrowIcon = memo(
 ArrowIcon.displayName = "ArrowIcon";
 
 const ProfileSection = memo(() => (
-  <section className="scroll-section perf-section flex-shrink-0 w-screen h-full flex items-center justify-center p-4 sm:p-6 lg:p-8">
+  <section className="scroll-section perf-section flex-shrink-0 w-full p-4 sm:p-6 lg:p-8 flex items-center justify-center">
     <div className="max-w-6xl w-full">
       <div className="glass-effect-light rounded-2xl lg:rounded-3xl overflow-hidden shadow-2xl">
         <div className="grid md:grid-cols-2">
-          <div className="relative h-64 sm:h-80 md:h-full overflow-hidden">
+          <div className="relative h-48 sm:h-64 md:h-full overflow-hidden">
             <video
               autoPlay
               loop
@@ -306,17 +344,17 @@ const ProfileSection = memo(() => (
             </video>
             <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
           </div>
-          <div className="p-6 sm:p-8 lg:p-12 text-gray-900 dark:text-white">
+          <div className="p-4 py-6 sm:p-8 lg:p-12 text-gray-900 dark:text-white">
             <span className="inline-block px-4 py-1.5 bg-indigo-600 text-white text-xs sm:text-sm font-bold rounded-full mb-4">
               Profil Sekolah
             </span>
-            <h2 className="text-2xl sm:text-3xl lg:text-4xl font-black mb-4 leading-tight text-gray-900 dark:text-white text-balance">
+            <h2 className="text-xl sm:text-3xl lg:text-4xl font-black mb-4 leading-tight text-gray-900 dark:text-white text-balance">
               Sekolah Kejuruan Terdepan di Indonesia
             </h2>
             <p className="text-gray-600 dark:text-slate-300 text-sm sm:text-base leading-relaxed mb-4">
               SMK Negeri 2 Surabaya adalah institusi pendidikan vokasi tertua di
               Jawa Timur, berdiri sejak era kolonial Belanda dengan nama
-              Koningen Emma School (KES).
+              Koningin Emma School (KES).
             </p>
             <p className="text-gray-600 dark:text-slate-300 text-sm sm:text-base leading-relaxed mb-6">
               Berlokasi di Jl. Tentara Genie Pelajar No.26, Surabaya. Kami
@@ -349,8 +387,8 @@ const JurusanSection = memo(
     scrollRef: React.RefObject<HTMLDivElement | null>;
     onScroll: (dir: "left" | "right") => void;
   }) => (
-    <section className="scroll-section perf-section flex-shrink-0 w-screen h-full flex items-center justify-center p-4 sm:p-6 lg:p-8">
-      <div className="max-w-7xl w-full h-full flex flex-col justify-center">
+    <section className="scroll-section perf-section flex-shrink-0 w-full p-4 sm:p-6 lg:p-8 flex items-center justify-center">
+      <div className="max-w-7xl w-full">
         <div className="text-center mb-6 sm:mb-10">
           <span className="inline-block px-4 py-1.5 bg-blue-600 text-white text-sm font-bold rounded-full mb-4">
             Program Keahlian
@@ -362,44 +400,49 @@ const JurusanSection = memo(
             Pilih jurusan sesuai passion dan raih masa depan cemerlang.
           </p>
         </div>
-        <div className="relative">
-          <button
-            onClick={() => onScroll("left")}
-            className="scroll-btn absolute left-0 sm:left-2 top-1/2 -translate-y-1/2 z-10 w-10 h-10 sm:w-12 sm:h-12 rounded-full glass-effect-light flex items-center justify-center text-gray-900 dark:text-white shadow-lg focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-blue-500 dark:focus-visible:ring-offset-gray-800"
-            aria-label="Scroll left"
-          >
-            <ArrowIcon direction="left" />
-          </button>
+        <div>
           <div
             ref={scrollRef}
-            className="inner-scroll-container flex gap-4 sm:gap-6 overflow-x-auto px-12 sm:px-16 py-4"
+            className="inner-scroll-container snap-x-mandatory flex gap-4 sm:gap-6 overflow-x-auto py-4 px-4"
           >
-            {jurusanData.map((item) => (
-              <div
-                key={item.id}
-                className="card-hover glass-effect-light rounded-xl sm:rounded-2xl p-5 flex-shrink-0 w-[75vw] sm:w-72 md:w-80"
-              >
+            {jurusanData.map((item) => {
+              const IconComponent = item.icon;
+              return (
                 <div
-                  className={`w-14 h-14 rounded-lg ${item.color} flex items-center justify-center text-white font-bold text-sm mb-4 shadow-lg`}
+                  key={item.id}
+                  className="card-hover snap-center glass-effect-light rounded-xl sm:rounded-2xl p-5 flex-shrink-0 w-[85vw] sm:w-80 md:w-96"
                 >
-                  {item.icon}
+                  <div
+                    className={`w-14 h-14 rounded-lg bg-gradient-to-br ${item.color} flex items-center justify-center text-white font-bold text-sm mb-4 shadow-lg`}
+                  >
+                    <IconComponent className="w-6 h-6 text-white" />
+                  </div>
+                  <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-2">
+                    {item.title}
+                  </h3>
+                  <p className="text-gray-700 dark:text-slate-300 text-sm leading-relaxed">
+                    {item.description}
+                  </p>
                 </div>
-                <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-2">
-                  {item.title}
-                </h3>
-                <p className="text-gray-700 dark:text-slate-300 text-sm leading-relaxed">
-                  {item.description}
-                </p>
-              </div>
-            ))}
+              );
+            })}
           </div>
-          <button
-            onClick={() => onScroll("right")}
-            className="scroll-btn absolute right-0 sm:right-2 top-1/2 -translate-y-1/2 z-10 w-10 h-10 sm:w-12 sm:h-12 rounded-full glass-effect-light flex items-center justify-center text-gray-900 dark:text-white shadow-lg focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-blue-500 dark:focus-visible:ring-offset-gray-800"
-            aria-label="Scroll right"
-          >
-            <ArrowIcon direction="right" />
-          </button>
+          <div className="flex justify-center gap-4 mt-6">
+            <button
+              onClick={() => onScroll("left")}
+              className="scroll-btn w-10 h-10 sm:w-12 sm:h-12 rounded-full glass-effect-light flex items-center justify-center text-gray-900 dark:text-white shadow-lg focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-blue-500 dark:focus-visible:ring-offset-gray-800"
+              aria-label="Scroll left"
+            >
+              <ArrowIcon direction="left" />
+            </button>
+            <button
+              onClick={() => onScroll("right")}
+              className="scroll-btn w-10 h-10 sm:w-12 sm:h-12 rounded-full glass-effect-light flex items-center justify-center text-gray-900 dark:text-white shadow-lg focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-blue-500 dark:focus-visible:ring-offset-gray-800"
+              aria-label="Scroll right"
+            >
+              <ArrowIcon direction="right" />
+            </button>
+          </div>
         </div>
       </div>
     </section>
@@ -415,63 +458,59 @@ const EskulSection = memo(
     scrollRef: React.RefObject<HTMLDivElement | null>;
     onScroll: (dir: "left" | "right") => void;
   }) => (
-    <section className="scroll-section perf-section flex-shrink-0 w-screen h-full flex items-center justify-center p-4 sm:p-6 lg:p-8">
-      <div className="max-w-7xl w-full h-full flex flex-col justify-center">
+    <section className="scroll-section perf-section flex-shrink-0 w-full p-4 sm:p-6 lg:p-8 flex items-center justify-center">
+      <div className="max-w-7xl w-full">
         <div className="text-center mb-6 sm:mb-10">
           <span className="inline-block px-4 py-1.5 bg-purple-600 text-white text-sm font-bold rounded-full mb-4">
             Aktivitas Siswa
           </span>
           <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black text-gray-900 dark:text-white mb-3 text-balance">
-            13 Ekstrakurikuler Pilihan
+            Ekstrakurikuler Pilihan
           </h2>
           <p className="text-base md:text-lg text-gray-700 dark:text-slate-300 max-w-3xl mx-auto px-4">
             Kembangkan bakat dan minat di luar jam pelajaran akademik.
           </p>
         </div>
-        <div className="relative">
-          <button
-            onClick={() => onScroll("left")}
-            className="scroll-btn absolute left-0 sm:left-2 top-1/2 -translate-y-1/2 z-10 w-10 h-10 sm:w-12 sm:h-12 rounded-full glass-effect-light flex items-center justify-center text-gray-900 dark:text-white shadow-lg focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-purple-500 dark:focus-visible:ring-offset-gray-800"
-            aria-label="Scroll left"
-          >
-            <ArrowIcon direction="left" />
-          </button>
+        <div>
           <div
             ref={scrollRef}
-            className="inner-scroll-container flex gap-4 sm:gap-6 overflow-x-auto px-12 sm:px-16 py-4"
+            className="inner-scroll-container snap-x-mandatory flex gap-4 sm:gap-6 overflow-x-auto py-4 px-4"
           >
             {eskulData.map((item) => (
               <div
                 key={item.id}
-                className="card-hover glass-effect-light rounded-xl sm:rounded-2xl p-5 flex-shrink-0 w-[75vw] sm:w-72 md:w-80"
+                className="card-hover snap-center glass-effect-light rounded-xl sm:rounded-2xl p-5 flex-shrink-0 w-[85vw] sm:w-80 md:w-96"
               >
                 <div
-                  className={`w-14 h-14 rounded-lg ${item.color} flex items-center justify-center text-white font-bold text-base mb-4 shadow-md`}
+                  className={`w-14 h-14 rounded-lg bg-gradient-to-br ${item.color} flex items-center justify-center text-white font-bold text-base mb-4 shadow-md`}
                 >
-                  {item.icon}
+                  <span className="text-2xl">{item.emoji}</span>
                 </div>
                 <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-2">
-                  {item.name}
+                  {item.title}
                 </h3>
                 <p className="text-gray-700 dark:text-slate-300 text-sm leading-relaxed mb-3">
                   {item.description}
                 </p>
-                <div className="flex items-center text-sm text-gray-600 dark:text-slate-400">
-                  <span className="mr-2" aria-hidden="true">
-                    👥
-                  </span>
-                  {item.participants}
-                </div>
               </div>
             ))}
           </div>
-          <button
-            onClick={() => onScroll("right")}
-            className="scroll-btn absolute right-0 sm:right-2 top-1/2 -translate-y-1/2 z-10 w-10 h-10 sm:w-12 sm:h-12 rounded-full glass-effect-light flex items-center justify-center text-gray-900 dark:text-white shadow-lg focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-purple-500 dark:focus-visible:ring-offset-gray-800"
-            aria-label="Scroll right"
-          >
-            <ArrowIcon direction="right" />
-          </button>
+          <div className="flex justify-center gap-4 mt-6">
+            <button
+              onClick={() => onScroll("left")}
+              className="scroll-btn w-10 h-10 sm:w-12 sm:h-12 rounded-full glass-effect-light flex items-center justify-center text-gray-900 dark:text-white shadow-lg focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-purple-500 dark:focus-visible:ring-offset-gray-800"
+              aria-label="Scroll left"
+            >
+              <ArrowIcon direction="left" />
+            </button>
+            <button
+              onClick={() => onScroll("right")}
+              className="scroll-btn w-10 h-10 sm:w-12 sm:h-12 rounded-full glass-effect-light flex items-center justify-center text-gray-900 dark:text-white shadow-lg focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-purple-500 dark:focus-visible:ring-offset-gray-800"
+              aria-label="Scroll right"
+            >
+              <ArrowIcon direction="right" />
+            </button>
+          </div>
         </div>
       </div>
     </section>
@@ -480,8 +519,8 @@ const EskulSection = memo(
 EskulSection.displayName = "EskulSection";
 
 const AchievementsSection = memo(() => (
-  <section className="scroll-section perf-section flex-shrink-0 w-screen h-full flex items-center justify-center p-4 sm:p-6 lg:p-8">
-    <div className="max-w-4xl w-full h-full flex flex-col justify-center">
+  <section className="scroll-section perf-section flex-shrink-0 w-full p-4 sm:p-6 lg:p-8 flex items-center justify-center">
+    <div className="max-w-6xl w-full">
       <div className="text-center mb-8 md:mb-12">
         <span className="inline-block px-4 py-1.5 bg-yellow-600 text-white text-sm font-bold rounded-full mb-4">
           Prestasi
@@ -493,17 +532,17 @@ const AchievementsSection = memo(() => (
           Kebanggaan sekolah di berbagai kompetisi.
         </p>
       </div>
-      <div className="space-y-4 sm:space-y-5 w-full">
+      <div className="space-y-3 sm:space-y-5 w-full">
         {achievementsData.map((item) => (
           <div
             key={item.id}
-            className={`card-hover ${item.bgColor} rounded-xl sm:rounded-2xl p-5 sm:p-6 text-white shadow-xl flex items-center gap-5`}
+            className={`card-hover ${item.bgColor} rounded-xl sm:rounded-2xl p-4 sm:p-6 text-white shadow-xl flex items-center gap-4 sm:gap-5`}
           >
-            <div className="text-4xl sm:text-5xl flex-shrink-0">
+            <div className="text-3xl sm:text-5xl flex-shrink-0">
               {item.icon}
             </div>
             <div className="min-w-0 flex-1">
-              <h3 className="text-lg sm:text-xl font-bold mb-1">
+              <h3 className="text-base sm:text-xl font-bold mb-1">
                 {item.title}
               </h3>
               <p className="text-white/90 text-sm sm:text-base">{item.event}</p>
@@ -516,45 +555,33 @@ const AchievementsSection = memo(() => (
 ));
 AchievementsSection.displayName = "AchievementsSection";
 
-const NewsSection = memo(() => (
-  <section className="scroll-section perf-section flex-shrink-0 w-screen h-full flex items-center justify-center p-4 sm:p-6 lg:p-8">
-    <div className="max-w-4xl w-full h-full flex flex-col justify-center">
-      <div className="text-center mb-8 md:mb-12">
-        <span className="inline-block px-4 py-1.5 bg-teal-600 text-white text-sm font-bold rounded-full mb-4">
-          Berita Terkini
+// Komponen Berita CTA
+const NewsCtaSection = memo(() => (
+  <section className="scroll-section perf-section flex-shrink-0 w-full min-w-full p-4 sm:p-6 lg:p-8 flex items-center justify-center">
+    <div className="max-w-6xl w-full">
+      <div className="glass-effect-light rounded-2xl lg:rounded-3xl shadow-2xl p-8 sm:p-12 text-center">
+        <span className="inline-block px-4 py-1.5 bg-teal-600 text-white text-xs sm:text-sm font-bold rounded-full mb-4">
+          Berita & Informasi
         </span>
-        <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black text-gray-900 dark:text-white mb-3 text-balance">
-          Kabar Terbaru
+        <h2 className="text-2xl sm:text-3xl lg:text-4xl font-black mb-4 text-gray-900 dark:text-white text-balance">
+          Ikuti Kabar Terbaru Kami
         </h2>
-        <p className="text-base md:text-lg text-gray-700 dark:text-slate-300 max-w-2xl mx-auto px-4">
-          Update kegiatan dan pencapaian sekolah.
+        <p className="text-gray-600 dark:text-slate-300 text-sm sm:text-base leading-relaxed mb-8 max-w-xl mx-auto">
+          Lihat semua kegiatan, pengumuman, dan artikel terbaru dari SMKN 2
+          Surabaya. Jangan lewatkan informasi penting!
         </p>
-      </div>
-      <div className="space-y-4 sm:space-y-5 w-full">
-        {newsData.map((item) => (
-          <div
-            key={item.id}
-            className="card-hover glass-effect-light rounded-xl sm:rounded-2xl p-5 sm:p-7"
-          >
-            <h3 className="text-lg sm:text-xl font-bold text-gray-900 dark:text-white mb-3">
-              {item.title}
-            </h3>
-            <p className="text-gray-700 dark:text-slate-300 text-sm sm:text-base leading-relaxed mb-4">
-              {item.excerpt}
-            </p>
-            <div className="flex items-center justify-between text-sm text-gray-600 dark:text-slate-400 pt-4 border-t border-gray-300/30 dark:border-white/10">
-              <span>📅 {item.date}</span>
-              <button className="text-cyan-600 dark:text-cyan-400 font-semibold hover:text-cyan-700 dark:hover:text-cyan-300 transition-colors rounded-md focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-cyan-500 dark:focus-visible:ring-offset-gray-800">
-                Baca Selengkapnya →
-              </button>
-            </div>
-          </div>
-        ))}
+        <Link
+          href="/berita"
+          className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-gradient-to-r from-blue-500 to-purple-500 text-white font-semibold rounded-lg shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-300 focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-blue-500"
+        >
+          Lihat Semua Berita
+          <ArrowRight className="w-5 h-5" />
+        </Link>
       </div>
     </div>
   </section>
 ));
-NewsSection.displayName = "NewsSection";
+NewsCtaSection.displayName = "NewsCtaSection";
 
 // --- KOMPONEN UTAMA ---
 const Others = () => {
@@ -563,6 +590,14 @@ const Others = () => {
   const jurusanScrollRef = useRef<HTMLDivElement>(null);
   const eskulScrollRef = useRef<HTMLDivElement>(null);
   const [scrollProgress, setScrollProgress] = useState(0);
+
+  // useEffect untuk memperbaiki scroll "mental" di mobile
+  useEffect(() => {
+    document.documentElement.style.overscrollBehaviorY = "none";
+    return () => {
+      document.documentElement.style.overscrollBehaviorY = "auto";
+    };
+  }, []);
 
   useEffect(() => {
     let ticking = false;
@@ -601,7 +636,7 @@ const Others = () => {
     (ref: React.RefObject<HTMLDivElement | null>) =>
     (direction: "left" | "right") => {
       if (ref.current) {
-        const scrollAmount = ref.current.clientWidth * 0.75;
+        const scrollAmount = ref.current.clientWidth * 0.9;
         ref.current.scrollBy({
           left: direction === "left" ? -scrollAmount : scrollAmount,
           behavior: "smooth",
@@ -621,6 +656,18 @@ const Others = () => {
         .inner-scroll-container::-webkit-scrollbar {
           display: none;
         }
+        /* CSS untuk Scroll Snap */
+        .snap-x-mandatory {
+          scroll-snap-type: x mandatory;
+          scroll-padding: 1rem;
+        }
+        .snap-center {
+          scroll-snap-align: center;
+        }
+        .snap-start {
+          scroll-snap-align: start;
+        }
+
         .perf-section {
           contain: content;
         }
@@ -645,9 +692,6 @@ const Others = () => {
           background: rgba(30, 41, 59, 0.5);
           border: 1px solid rgba(255, 255, 255, 0.1);
         }
-        .scroll-btn:active {
-          transform: translateY(-50%) scale(0.95);
-        }
         .text-balance {
           text-wrap: balance;
         }
@@ -655,13 +699,13 @@ const Others = () => {
       <div className="sticky top-0 h-screen w-full overflow-hidden">
         <div className="absolute top-0 left-0 w-full h-1.5 bg-gray-200/30 dark:bg-white/5 z-50">
           <div
-            className="h-full bg-gradient-to-r from-cyan-400 via-purple-500 to-pink-500 transition-all duration-150 ease-linear"
+            className="h-full bg-gradient-to-r from-cyan-400 via-purple-500 to-pink-500"
             style={{ width: `${scrollProgress}%` }}
-          />
+          ></div>
         </div>
         <div
           ref={scrollContainerRef}
-          className="horizontal-scroll-container h-full w-full overflow-x-hidden flex"
+          className="horizontal-scroll-container h-full w-full overflow-x-hidden flex items-center"
         >
           <ProfileSection />
           <JurusanSection
@@ -673,7 +717,7 @@ const Others = () => {
             onScroll={createScrollHandler(eskulScrollRef)}
           />
           <AchievementsSection />
-          <NewsSection />
+          <NewsCtaSection />
         </div>
       </div>
     </div>

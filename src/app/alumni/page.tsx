@@ -6,15 +6,17 @@ import Footer from "@/components/ui/global/footer";
 export default function Home() {
   return (
     <>
-      <HeroSection
-        title="Alumni"
-        backgroundImage="/img/slider/alumni.webp"
-        ctaText="Jelajahi Lebih Lanjut"
-        ctaColor="bg-blue-600 hover:bg-blue-700"
-      />
-      <AlumniPage />
-      <Bmw />
-      <Footer/>
+      <div className="overflow-x-hidden">
+        <HeroSection
+          title="Alumni"
+          backgroundImage="/img/slider/alumni.webp"
+          ctaText="Jelajahi Lebih Lanjut"
+          ctaColor="bg-blue-600 hover:bg-blue-700"
+        />
+        <AlumniPage />
+        <Bmw />
+        <Footer />
+      </div>
     </>
   );
 }

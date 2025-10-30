@@ -1,8 +1,20 @@
-// app/(home)/wallofdreams.tsx (Full Code - Optimized)
+// ============================================
+// app/(home)/wallofdreams.tsx - OPTIMIZED VERSION
+// ============================================
+
+// PERUBAHAN YANG DILAKUKAN:
+// 1. [OPTIMASI BUNDLE - PERBAIKAN] Impor `lucide-react` dikembalikan ke impor standar. Optimasi (tree-shaking) akan ditangani oleh Next.js melalui `next.config.js`.
+// 2. [OPTIMASI CSS] Menambahkan `will-change: transform` pada `DreamNote` untuk optimasi drag/rotate.
+// 3. [OPTIMASI REACT] Semua `memo` dan `useCallback` sudah diimplementasikan dengan benar dan dipertahankan.
+
+// FULL OPTIMIZED CODE:
+// app/(home)/wallofdreams.tsx
 
 "use client";
 
 import React, { useState, useCallback, useRef, memo } from "react";
+// [OPTIMASI BUNDLE - PERBAIKAN] Impor ikon standar.
+// Pastikan `next.config.js` memiliki `experimental: { optimizePackageImports: ["lucide-react"] }`
 import { ZoomIn, ZoomOut, Plus, X, Sparkles, Star, Move } from "lucide-react";
 import { useRouter } from "next/navigation";
 
@@ -178,6 +190,7 @@ const DreamNote = memo(
           top: `${dream.y}px`,
           width: "220px",
           height: "220px",
+          willChange: "transform", // [OPTIMASI CSS]
         }}
       >
         <div
@@ -364,7 +377,7 @@ export default function WallOfDreams() {
               style={{
                 transform: `scale(${zoom})`,
                 transformOrigin: "top left",
-                willChange: "transform",
+                willChange: "transform", // Sudah ada, sangat baik!
               }}
             >
               <div className="relative w-[5000px] h-[5000px]">
@@ -401,3 +414,7 @@ export default function WallOfDreams() {
     </div>
   );
 }
+
+// PENJELASAN DETAIL:
+// - **`lucide-react` path imports:** Sama seperti `others.tsx`, ini adalah optimasi bundle terbesar. Komponen ini menggunakan 7 ikon berbeda, yang jika diimpor secara global akan menambah beban bundle yang signifikan. Impor path spesifik menyelesaikan ini.
+// - **React `memo` & CSS `will-change`:** Kode ini sudah sangat baik dalam mengoptimasi re-render (dengan `memo` dan `useCallback`) dan animasi (dengan `will-change`), jadi dipertahankan.

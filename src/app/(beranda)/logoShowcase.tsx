@@ -1,4 +1,14 @@
-// app/(home)/logoShowcase.tsx (Full Code - Optimized)
+// ============================================
+// app/(home)/logoShowcase.tsx - OPTIMIZED VERSION
+// ============================================
+
+// PERUBAHAN YANG DILAKUKAN:
+// 1. [OPTIMASI IMAGE] Menghapus `priority` dan `loading="eager"` dari `next/image`. Karena seluruh komponen `LogoShowcase` sekarang di-lazy load (dari `page.tsx`), tidak ada gambar di dalamnya yang boleh menjadi prioritas. Membiarkan `next/image` menggunakan default (`loading="lazy"`) adalah pilihan yang tepat.
+// 2. [OPTIMASI CSS] Menambahkan `will-change: transform` ke `.animate-scroll` dalam `<style jsx>`. Animasi `translate3d` sudah baik (memicu GPU), `will-change` memberikan petunjuk tambahan ke browser.
+// 3. [OPTIMASI PRELOAD] Menghapus `useEffect` yang melakukan preload manual (`<link rel="preload">`). `next/image` modern (terutama dengan `loading="lazy"`) memiliki strategi loading internal yang canggih. Preload manual seringkali justru mengganggu prioritas browser. `IntersectionObserver` yang sudah ada cukup untuk memicu loading saat komponen mendekati viewport.
+
+// FULL OPTIMIZED CODE:
+// app/(home)/logoShowcase.tsx
 
 "use client";
 import { useState, useMemo, useCallback, useEffect, useRef } from "react";
@@ -33,7 +43,7 @@ export default function LogoShowcase() {
           }
         });
       },
-      { threshold: 0.1, rootMargin: "50px" }
+      { threshold: 0.1, rootMargin: "50px" } // trigger sedikit sebelum masuk viewport
     );
 
     const section = sectionRef.current;
@@ -43,20 +53,9 @@ export default function LogoShowcase() {
     };
   }, []);
 
-  useEffect(() => {
-    if (!isVisible) return;
-    const preloadLinks = logos.map((logo) => {
-      const link = document.createElement("link");
-      link.rel = "preload";
-      link.as = "image";
-      link.href = logo.url;
-      document.head.appendChild(link);
-      return link;
-    });
-    return () => {
-      preloadLinks.forEach((link) => document.head.removeChild(link));
-    };
-  }, [isVisible]);
+  // [OPTIMASI] Menghapus useEffect manual preload.
+  // IntersectionObserver di atas sudah cukup untuk memicu animasi,
+  // dan `loading="lazy"` pada Image akan menangani pemuatan gambar.
 
   const handleLogoMouseEnter = useCallback((i: number) => {
     setIsPaused(true);
@@ -95,7 +94,6 @@ export default function LogoShowcase() {
               const isHovered = hoveredIndex === i;
               const isOtherHovered =
                 hoveredIndex !== null && hoveredIndex !== i;
-              const isOriginal = i < logos.length;
               return (
                 <div
                   key={`${logo.name}-${i}`}
@@ -123,8 +121,8 @@ export default function LogoShowcase() {
                         opacity: isHovered ? 1 : 0.7,
                       }}
                       quality={85}
-                      loading={isOriginal && i < 3 ? "eager" : "lazy"}
-                      priority={isOriginal && i < 3}
+                      // [OPTIMASI IMAGE] Hapus priority dan loading="eager"
+                      loading={"lazy"}
                       draggable={false}
                       sizes="(max-width: 768px) 128px, 160px"
                     />
@@ -147,6 +145,7 @@ export default function LogoShowcase() {
         }
         .animate-scroll {
           animation: scroll 40s linear infinite;
+          will-change: transform; /* [OPTIMASI CSS] */
         }
         .pause-animation {
           animation-play-state: paused;
@@ -163,3 +162,7 @@ export default function LogoShowcase() {
     </div>
   );
 }
+
+// PENJELASAN DETAIL:
+// - **Image `priority` Removal:** Sama seperti `stateSlider.tsx`, komponen ini di-lazy load, jadi gambar di dalamnya bukan LCP. Menghapus `priority` memungkinkan browser menjadwalkan download gambar dengan lebih cerdas.
+// - **Manual Preload Removal:** `IntersectionObserver` sudah memberi sinyal kapan animasi harus dimulai. `next/image` dengan `loading="lazy"` akan otomatis mengunduh gambar saat mendekati viewport. Menghapus preload manual menyederhanakan kode dan menyerahkan prioritas ke browser.

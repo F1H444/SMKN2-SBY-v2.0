@@ -18,11 +18,11 @@ import {
 // Ini mencegah array dibuat ulang pada setiap render, menghemat sumber daya.
 const MAIN_NAV_ITEMS = [
   { label: "Beranda", href: "/", icon: "🏠" },
-  { label: "Tentang", href: "/about", icon: "📖" },
-  { label: "Jurusan", href: "/programs", icon: "🎓" },
+  { label: "Tentang", href: "/tentang", icon: "📖" },
+  { label: "Jurusan", href: "/jurusan", icon: "🎓" },
   { label: "Alumni", href: "/alumni", icon: "👥" },
-  { label: "Ekstrakulikuler", href: "/activities", icon: "⚽" },
-  { label: "Berita", href: "/news", icon: "📰" },
+  { label: "Ekstrakulikuler", href: "/eskul", icon: "⚽" },
+  { label: "Berita", href: "/berita", icon: "📰" },
 ];
 
 const CONTACT_INFO = [

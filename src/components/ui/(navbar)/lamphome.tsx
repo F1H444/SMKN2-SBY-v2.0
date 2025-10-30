@@ -88,10 +88,12 @@ const Logo = memo(
 );
 Logo.displayName = "Logo";
 
-// FIX: Memberikan tipe spesifik untuk props
 interface ChainPullProps {
   isDark: boolean;
-  onDragEnd: (event: MouseEvent | TouchEvent | PointerEvent, info: PanInfo) => void;
+  onDragEnd: (
+    event: MouseEvent | TouchEvent | PointerEvent,
+    info: PanInfo
+  ) => void;
 }
 
 const ChainPull = memo(({ isDark, onDragEnd }: ChainPullProps) => (
@@ -168,7 +170,6 @@ const ChainPull = memo(({ isDark, onDragEnd }: ChainPullProps) => (
 ));
 ChainPull.displayName = "ChainPull";
 
-// FIX: Menambahkan interface untuk props komponen
 interface LamphomeProps {
   logoSrc: string;
   logoSrcDark: string;
@@ -189,7 +190,6 @@ export function Lamphome({
   const [isMounted, setIsMounted] = useState(false);
 
   const profileRef = useRef<HTMLDivElement>(null);
-  // FIX: Menghapus 'theme' yang tidak digunakan
   const { setTheme, resolvedTheme } = useTheme();
   const { isLoggedIn, isLoading, logout } = useAuth();
 
@@ -240,7 +240,6 @@ export function Lamphome({
 
   return (
     <>
-      {/* PERUBAHAN KUNCI: Menambahkan left-1/2 -translate-x-1/2 untuk centering horizontal */}
       <div className="fixed top-6 left-1/2 -translate-x-1/2 flex items-center justify-between w-[95%] max-w-6xl py-3 px-3 md:px-6 bg-white/80 dark:bg-neutral-950/80 backdrop-blur-sm border-2 border-white dark:border-white/20 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 z-50">
         <div className="flex items-center flex-shrink-0">
           {isMounted && (
@@ -368,6 +367,10 @@ export function Lamphome({
         </AnimatePresence>
       </div>
 
+      {/* --- PERBAIKAN ---
+        'overflow-x-hidden' telah dihapus dari sini
+        agar halaman {children} bisa mengontrol scroll-nya sendiri.
+      */}
       <main className="w-full">{children}</main>
     </>
   );

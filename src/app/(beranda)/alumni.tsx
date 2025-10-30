@@ -1,4 +1,14 @@
-// app/(home)/alumni.tsx (Full Code - Optimized)
+// ============================================
+// app/(home)/alumni.tsx - OPTIMIZED VERSION
+// ============================================
+
+// PERUBAHAN YANG DILAKUKAN:
+// 1. [OPTIMASI CSS] Menambahkan `will-change: transform, box-shadow` pada `AlumniCard` untuk memberi petunjuk browser agar mengoptimalkan animasi `hover` (transisi `translate-y` dan `shadow`).
+// 2. [OPTIMASI CSS] Menambahkan `will-change: transform` pada tombol Link "Lihat Semua Kisah Alumni" untuk optimasi animasi `hover`.
+// 3. [OPTIMASI REACT] Kode sudah baik, menggunakan `memo` untuk `AlumniCard` dan data statis di luar komponen. Tidak ada perubahan besar diperlukan.
+
+// FULL OPTIMIZED CODE:
+// app/(home)/alumni.tsx
 
 "use client";
 
@@ -47,10 +57,12 @@ const alumniData = [
 
 const AlumniCard = memo(
   ({ alumni, index }: { alumni: (typeof alumniData)[0]; index: number }) => (
-    // OPTIMASI: Animasi CSS ringan dengan delay untuk efek staggered yang menarik.
     <div
       className="flex flex-col bg-white/70 dark:bg-gray-800/60 rounded-2xl shadow-md hover:shadow-xl transition-all duration-300 overflow-hidden border border-gray-200/50 dark:border-gray-700/50 hover:-translate-y-2 backdrop-blur-md p-6 animate-fadeInUp"
-      style={{ animationDelay: `${index * 150}ms` }}
+      style={{
+        animationDelay: `${index * 150}ms`,
+        willChange: "transform, box-shadow", // [OPTIMASI CSS]
+      }}
     >
       <p className="text-sm text-violet-600 dark:text-violet-400 font-semibold">
         {alumni.role}
@@ -111,9 +123,9 @@ export default function AlumniInspirationTextOnly() {
           style={{ animationDelay: "600ms" }}
         >
           <Link
-            href="/alumni
-            "
+            href="/alumni"
             className="bg-violet-600 hover:bg-violet-700 text-white px-8 py-3 rounded-full font-semibold shadow-md hover:shadow-lg transform hover:-translate-y-1 transition-all duration-300 inline-block focus-visible:outline focus-visible:outline-offset-2 focus-visible:outline-violet-500"
+            style={{ willChange: "transform, box-shadow" }} // [OPTIMASI CSS]
           >
             Lihat Semua Kisah Alumni
           </Link>
@@ -122,3 +134,7 @@ export default function AlumniInspirationTextOnly() {
     </>
   );
 }
+
+// PENJELASAN DETAIL:
+// - **`will-change`:** Menambahkan properti CSS `will-change` memberi petunjuk pada browser bahwa properti ini akan berubah. Browser dapat memindahkan elemen ini ke layernya sendiri (GPU) untuk animasi yang lebih mulus dan mengurangi *repaint*.
+// - Kode ini sudah efisien, jadi tidak banyak yang diubah selain optimasi minor pada CSS.
