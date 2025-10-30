@@ -125,7 +125,7 @@ const jurusanData = [
 
 export default function JurusanPage() {
   const main = useRef<HTMLDivElement>(null);
-  const [majors, setMajors] = useState(); //ambil data dari majors
+  const [majors, setMajors] = useState<[]>([]); //ambil data dari majors
 
   const fetchMajors = async () => {
     const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/majors`);
@@ -163,9 +163,6 @@ export default function JurusanPage() {
       ref={main}
       className="min-h-screen p-8 md:p-12 lg:p-16 bg-white dark:bg-gray-950"
     >
-      <div>
-        Data: {majors}
-      </div>
       <div className="max-w-7xl mx-auto">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -183,6 +180,12 @@ export default function JurusanPage() {
             industri.
           </p>
         </motion.div>
+
+        <div className="jurusan-grid grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 md:gap-8">
+          {majors.map((major) => {
+            return major
+          })}
+        </div>
 
         <div className="jurusan-grid grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 md:gap-8">
           {jurusanData.map((item) => {
