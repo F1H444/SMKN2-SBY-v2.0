@@ -127,9 +127,17 @@ const eskulData = [
 
 export default function EskulPage() {
   const main = useRef<HTMLDivElement>(null);
-  const [dataEkskul, setDataEkskul] = useState([]); // Variabel ini sekarang tidak digunakan untuk data, tapi dipertahankan jika ada kebutuhan API di masa depan
+  const [dataEkskul, setDataEkskul] = useState(); // Variabel ini sekarang tidak digunakan untuk data, tapi dipertahankan jika ada kebutuhan API di masa depan
+
+  const fetchEkskuls = async () => {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/extras`);
+    const data = await res.json();
+    setDataEkskul(data);
+  }
+
 
   useEffect(() => {
+    fetchEkskuls();
     // Mematikan fetch API yang tidak perlu jika menggunakan data lokal
     // fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/majors`)
     //   .then((res) => res.json())

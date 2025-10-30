@@ -14,7 +14,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
-import React, { useState, memo } from "react";
+import React, { useState, memo, useEffect } from "react";
 
 // --- DATA ESKUL LENGKAP DISESUAIKAN DENGAN DAFTAR PADA GAMBAR ---
 const eskulData = {
@@ -474,11 +474,27 @@ const PrestasiListItem = memo(({ text }: { text: string }) => (
 ));
 PrestasiListItem.displayName = "PrestasiListItem";
 
-export default function EskulDetailPage() {
+export default async function EskulDetailPage({
+  searchParams
+}: {
+  searchParams: Promise<{id: string}>
+}) {
   const params = useParams();
-  const id = params.id as string;
-  const eskul = eskulData[id as keyof typeof eskulData];
+  const id = await searchParams;
+  const [ekskul, setEkskul] = useState();
 
+  const fetchEkskul = async () => {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/extras/${id}`);
+    const data = await res.json();
+    setEkskul(data);
+  }
+
+  useEffect(() => {
+    fetchEkskul();
+  });
+
+
+  const eskul = eskulData[id as keyof typeof eskulData];
   const [isImageLoaded, setIsImageLoaded] = useState(false);
 
   if (!eskul) {
