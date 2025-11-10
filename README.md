@@ -6,7 +6,7 @@ Proyek ini bukan sekadar website statis, melainkan aplikasi web interaktif penuh
 
 ## 🔴 Demo Langsung (Live Demo)
 
-Lihat proyek ini secara langsung di Vercel:
+Coba aplikasi ini secara langsung di Vercel:
 
 ### [https://smkn2-sby-v02.vercel.app/](https://smkn2-sby-v02.vercel.app/)
 
@@ -14,7 +14,7 @@ Lihat proyek ini secara langsung di Vercel:
 
 ## 📸 Tampilan Proyek
 
-![Demo Website SMKN 2 Surabaya](https://user-images.githubusercontent.com/...)
+![Demo Website SMKN 2 Surabaya](https://user-images.githubusercontent.com/...) 
 
 ---
 
@@ -70,12 +70,12 @@ Ingin mencoba atau berkontribusi pada proyek ini?
 
 1.  **Clone repositori:**
     ```bash
-    git clone [https://github.com/F1H444/SMKN2-SBY-v.02-.git](https://github.com/F1H444/SMKN2-SBY-v.02-.git)
+    git clone [https://github.com/F1H444/smkn2-sby-v2.0.git](https://github.com/F1H444/smkn2-sby-v2.0.git)
     ```
 
 2.  **Masuk ke direktori proyek:**
     ```bash
-    cd SMKN2-SBY-v.02-
+    cd smkn2-sby-v2.0
     ```
 
 3.  **Install dependensi:**
