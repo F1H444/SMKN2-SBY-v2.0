@@ -1,37 +1,106 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 🚀 Website Redesign SMKN 2 Surabaya (v2.0)
 
-## Getting Started
+Selamat datang di repositori Website Profil SMKN 2 Surabaya v2.0! Ini adalah proyek *redesign* total yang dibangun menggunakan **Next.js 16 (App Router)** dengan fokus pada performa tinggi, animasi yang kaya, dan pengalaman pengguna yang modern.
 
-First, run the development server:
+Proyek ini bukan sekadar website statis, melainkan aplikasi web interaktif penuh yang menampilkan berbagai fitur canggih untuk profil sekolah.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+## 🔴 Demo Langsung (Live Demo)
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Lihat proyek ini secara langsung di Vercel:
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### [https://smkn2-sby-v02.vercel.app/](https://smkn2-sby-v02.vercel.app/)
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+---
 
-## Learn More
+## 📸 Tampilan Proyek
 
-To learn more about Next.js, take a look at the following resources:
+![Demo Website SMKN 2 Surabaya](https://user-images.githubusercontent.com/...)
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+---
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## ✨ Fitur Unggulan
 
-## Deploy on Vercel
+Proyek ini dikemas dengan fitur-fitur modern untuk menciptakan pengalaman pengguna yang menarik dan interaktif:
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+* **Navigasi Multi-Halaman:** Website lengkap dengan 7 halaman utama (Beranda, Tentang, Jurusan, Alumni, Eskul, Berita, Kontak).
+* **Routing Dinamis:** Halaman detail dibuat secara dinamis untuk semua 11 Jurusan/page.tsx] dan 16+ Ekstrakurikuler/page.tsx].
+* **Sistem Berita (Blog):** Halaman berita fungsional dengan pemfilteran kategori dan halaman detail artikel/page.tsx].
+* **Formulir Kontak Fungsional:** Menggunakan **EmailJS** untuk mengirim pesan dari formulir kontak langsung ke email admin.
+* **Autentikasi Sederhana:** Sistem Login/Logout (berbasis `localStorage`) yang membuka fitur-fitur khusus seperti berkomentar di berita atau menambah "Mimpi".
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
-# SMKN2-SBY-v.02-
+### 🌟 Fitur Interaktif & Animasi
+
+* **360° Facility Tour:** Tur virtual fasilitas sekolah menggunakan **React Photo Sphere Viewer**.
+* **Homepage Horizontal Scrolling:** Bagian beranda utama dibuat dengan **GSAP & ScrollTrigger** untuk menciptakan efek *horizontal scroll* yang sinematik.
+* **Animated Theme Toggler:** Tombol *Dark Mode* unik berbentuk "tarikan lampu" yang menggunakan **View Transitions API** untuk animasi perubahan tema yang mulus.
+* **Wall of Dreams:** Fitur interaktif di mana pengguna dapat men-drag-and-drop "kartu mimpi" di papan tulis virtual.
+* **Animasi Lainnya:** Dibuat dengan **Framer Motion** untuk animasi *timeline* sejarah, `react-countup` untuk statistik, dan `react-simple-typewriter`.
+
+---
+
+## 🛠️ Tech Stack Utama
+
+* **Framework:** <img src="https://simpleicons.org/icons/nextdotjs.svg" width="16"> **Next.js 16** (App Router)
+* **Library:** <img src="https://simpleicons.org/icons/react.svg" width="16"> **React 19**
+* **Bahasa:** <img src="https://simpleicons.org/icons/typescript.svg" width="16"> **TypeScript**
+* **Styling:** <img src="https://simpleicons.org/icons/tailwindcss.svg" width="16"> **TailwindCSS 4**
+* **Animasi:**
+    * <img src="https://simpleicons.org/icons/framer.svg" width="16"> **Framer Motion**
+    * <img src="https://simpleicons.org/icons/greensock.svg" width="16"> **GSAP (ScrollTrigger)**
+* **UI:** [Lucide React](https://lucide.dev/) (Icons)
+* **Lain-lain:** [Next-Themes](https://github.com/pacocoursey/next-themes) (Dark Mode), [EmailJS](https://www.emailjs.com/) (Kontak), [React Photo Sphere Viewer](https://react-photo-sphere-viewer.js.org/) (360 Tour).
+
+---
+
+## ⚡ Performa & Optimasi
+
+Performa adalah fokus utama dari proyek ini.
+
+* **ISR (Incremental Static Regeneration):** Halaman beranda utama menggunakan `revalidate = 3600` untuk disajikan secara statis dari CDN, memastikan *load time* yang instan.
+* **Lazy Loading (Code Splitting):** Komponen-komponen berat di bawah "the fold" (seperti 360 Viewer, Wall of Dreams, dan Horizontal Scroll) dimuat secara dinamis menggunakan `next/dynamic`.
+* **Optimasi Gambar:** Menggunakan `next/image` di seluruh proyek, dengan `priority` di LCP (Largest Contentful Paint) dan `loading="lazy"` di gambar lainnya/page.tsx].
+* **Optimasi Bundle:** Menggunakan `experimental.optimizePackageImports` di `next.config.ts` untuk *tree-shaking* otomatis `lucide-react`.
+* **Memoization:** Penggunaan `React.memo`, `useCallback`, dan `useMemo` secara ekstensif untuk mencegah *re-render* yang tidak perlu pada komponen interaktif.
+
+---
+
+## 💻 Menjalankan Proyek Secara Lokal
+
+Ingin mencoba atau berkontribusi pada proyek ini?
+
+1.  **Clone repositori:**
+    ```bash
+    git clone [https://github.com/F1H444/SMKN2-SBY-v.02-.git](https://github.com/F1H444/SMKN2-SBY-v.02-.git)
+    ```
+
+2.  **Masuk ke direktori proyek:**
+    ```bash
+    cd SMKN2-SBY-v.02-
+    ```
+
+3.  **Install dependensi:**
+    ```bash
+    npm install
+    ```
+
+4.  **Siapkan Environment Variables:**
+    Buat file `.env.local` di root proyek dan tambahkan kredensial EmailJS Anda (diperlukan untuk halaman Kontak):
+    ```env
+    NEXT_PUBLIC_EMAILJS_SERVICE_ID=...
+    NEXT_PUBLIC_EMAILJS_TEMPLATE_ID=...
+    NEXT_PUBLIC_EMAILJS_PUBLIC_KEY=...
+    ```
+    *Anda bisa mendapatkan kunci ini secara gratis di [EmailJS.com](https://www.emailjs.com/)*.
+
+5.  **Jalankan server pengembangan:**
+    ```bash
+    npm run dev
+    ```
+
+6.  Buka [http://localhost:3000](http://localhost:3000) di browser Anda.
+
+---
+
+## 🤝 Kontribusi
+
+Kontribusi, isu, dan permintaan fitur sangat diharapkan!
